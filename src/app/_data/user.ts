@@ -11,9 +11,8 @@ export const fetchUser = cache(async () => {
     const {isAuth, userId, tenantId, expiresAt} = await verifySession(false)
     if (!isAuth) return {
         success: false,
-        count: 0,
-        users: [],
-        message: "Unauthorized"
+        user: null,
+        error: "Unauthorized!"
     };
     if (!(expiresAt instanceof Date)) {
         throw new Error('Invalid expiresAt date');
@@ -52,6 +51,7 @@ export const fetchUser = cache(async () => {
 
         return {
             success: false,
+            user: null,
             error: `Failed to create user! Please try again!`
         }
     }   
@@ -79,6 +79,8 @@ export const fetchUsers = cache(async (q: string, page: number) => {
 
     if (!isAuth) return {
         success: false,
+        count: 0,
+        users: [],
         message: "Unauthorized"
     };
     //const regex = new RegExp(q, "i");

@@ -19,7 +19,7 @@ interface user {
 const TeamSettingsPage = async ({ searchParams }: {searchParams: any}) => {
   const q = searchParams?.q || "";
   const page: number = searchParams?.page || 1;
-  const {count, users} = await fetchUsers(q, page);
+  const {success, count, users} = await fetchUsers(q, page);
   
   return (
     <div className="flex flex-col px-3 space-y-2">
@@ -45,9 +45,9 @@ const TeamSettingsPage = async ({ searchParams }: {searchParams: any}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user: user) => (
+                    {success && count > 0 ? users!.map((user: user) => (
                         <User key={user.id} user={user}/>
-                    ))}
+                    )) : <p className="text-red-500">Error: Could not find any users! Please contact support!</p>}
                 </tbody>
             </table>
             <Pagination count={count}/>
