@@ -2,20 +2,35 @@
 import "server-only"
 
 import { prisma } from "@/utils/prisma";
-import { verifySession } from "@/app/_lib/session";
+import { updateSession, verifySession } from "@/app/_lib/session";
 import { cache } from 'react'
+import { SESSION_UPDATE_THRESHOLD } from "../_lib/constants";
 
 export const fetchUser = cache(async () => {
 
-    const session = await verifySession()
-    if (!session) return null;
+    const {isAuth, userId, tenantId, expiresAt} = await verifySession(false)
+    if (!isAuth) return {
+        success: false,
+        count: 0,
+        users: [],
+        message: "Unauthorized"
+    };
+    if (!(expiresAt instanceof Date)) {
+        throw new Error('Invalid expiresAt date');
+    }
+    if(expiresAt.getTime() - SESSION_UPDATE_THRESHOLD >= Date.now() - expiresAt.getTime()){
+        await updateSession()
+    }
 
     try {
         await prisma.$connect()
 
         const user = await prisma.user.findUnique({
             where: {
-                id: session.userId
+                id: userId,
+                org: {
+                    id: String(tenantId)
+                }
             },
             select: {
                 id: true,
@@ -42,32 +57,30 @@ export const fetchUser = cache(async () => {
     }   
 })
 
-type FetchUsersResult = {
-    success: boolean;
-    count: number;
-    users: {
-        id: string;
-        email: string;
-        firstName: string | null;
-        lastName: string | null;
-        role: string;
-        isAdmin: boolean;
-    }[];
-    error?: unknown;
-    message?: string;
-};
+// type FetchUsersResult = {
+//     success: boolean;
+//     count: number;
+//     users: {
+//         id: string;
+//         email: string;
+//         firstName: string | null;
+//         lastName: string | null;
+//         role: string;
+//         isAdmin: boolean;
+//     }[];
+//     error?: unknown;
+//     message?: string;
+// };
 
 //ADMIN-ONLY function
-export const fetchUsers = cache(async (q: string, page: number): Promise<FetchUsersResult> => {
+export const fetchUsers = cache(async (q: string, page: number) => {
 
-    const session = await verifySession()
-    if (!session) return {
+    const {isAuth, tenantId} = await verifySession(true)
+
+    if (!isAuth) return {
         success: false,
-        count: 0,
-        users: [],
         message: "Unauthorized"
     };
-
     //const regex = new RegExp(q, "i");
     const ITEM_PER_PAGE = 10;
 
@@ -89,7 +102,10 @@ export const fetchUsers = cache(async (q: string, page: number): Promise<FetchUs
                         contains: q,
                         mode: 'insensitive'
                     }}
-                ]
+                ],
+                org: {
+                    id: String(tenantId)
+                }
 
                 
             },

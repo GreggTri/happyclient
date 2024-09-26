@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 
 export const deleteUser =  async(formData: FormData) => {
 
-    const session = await verifySession()
+    const session = await verifySession(true)//adding true here means admin only endpoint
     if (!session) return null;
 
     
@@ -31,25 +31,28 @@ export const deleteUser =  async(formData: FormData) => {
 }
 
 export const updateUserAdmin = async (formData: FormData) => {
-    const session = await verifySession()
+    const session = await verifySession(true) //adding true here means admin only endpoint
     if (!session) return null;
 
 
-    let isAdmin: boolean;
+    let isUserAdmin: boolean;
 
     if(formData.get('isAdmin') === "on"){
-        isAdmin = true;
+        isUserAdmin = true;
     } else {
-        isAdmin = false;
+        isUserAdmin = false;
     }
 
     const updatedUser = await prisma.user.update({
         where: {
-            id: String(formData.get('userId'))
+            id: String(formData.get('userId')),
+            org: {
+                id: session.tenantId!
+            }
         },
         data: {
             isAdmin: {
-                set: isAdmin
+                set: isUserAdmin
             }
         }
     })
@@ -61,7 +64,7 @@ export const updateUserAdmin = async (formData: FormData) => {
 
 
 export const updateUserRole = async (formData: FormData) => {
-    const session = await verifySession()
+    const session = await verifySession(true)
     if (!session) return null;
 
 
@@ -69,7 +72,10 @@ export const updateUserRole = async (formData: FormData) => {
 
     const updatedUser = await prisma.user.update({
         where: {
-            id: String(formData.get('userId'))
+            id: String(formData.get('userId')),
+            org: {
+                id: session.tenantId!
+            }
         },
         data: {
             role: {

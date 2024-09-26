@@ -77,7 +77,7 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
         await prisma.$disconnect()
 
-        await createSession(authenticatedUser!.id, authenticatedUser!.isAdmin, authenticatedUser!.tenantId, org!.stripeSubscriptionId  );
+        await createSession(authenticatedUser!.id, authenticatedUser!.isAdmin, authenticatedUser!.tenantId, org!.stripeSubscriptionId );
 
        
     } catch(error){

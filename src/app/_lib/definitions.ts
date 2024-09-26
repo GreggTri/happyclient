@@ -52,9 +52,9 @@ export type UpdateProfileFormState =
 
 
 export type SessionPayload = {
-  userId: string | number;
+  userId: string | null;
   expiresAt: Date;
   isAdmin: boolean;
   tenantId: string;
-  stripeSubscriptionId?: string;
+  stripeSubscriptionId: string | null;
 };

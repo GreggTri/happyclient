@@ -6,7 +6,7 @@ import { verifySession } from "@/app/_lib/session";
 import { cache } from 'react'
 
 export const getRoles = cache(async() => {
-    const session = await verifySession()
+    const session = await verifySession(true)
     if (!session) return null;
 
     //verify user is admin

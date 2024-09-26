@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
 
 export const updateName =  async(state: UpdateProfileFormState, formData: FormData) => {
 
-    const session = await verifySession()
+    const session = await verifySession(false)
     if (!session) return null;
 
     if (formData.get('firstName') == "" && formData.get('lastName') == "") {
@@ -31,9 +31,12 @@ export const updateName =  async(state: UpdateProfileFormState, formData: FormDa
 
     const { firstName, lastName} = validationResult.data
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
         where: {
-            id: session.userId
+            id: session.userId,
+            org: {
+                id: session.tenantId!
+            }
         },
         data: {
             ...(firstName && {firstName: firstName}),

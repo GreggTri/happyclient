@@ -1,13 +1,15 @@
 'use server'
 import 'server-only'
 
-import { SignJWT, jwtVerify } from 'jose'
+import { JWTPayload, SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { SessionPayload } from './definitions'
 import { get } from '@vercel/edge-config';
+import { SESSION_UPDATE_THRESHOLD } from './constants'
 
-const KEY = new TextEncoder().encode(get('JWT_SECRET'))
+
+const KEY = new TextEncoder().encode(String(get('JWT_SECRET')))
 
 
 export async function encrypt(payload: SessionPayload) {
@@ -31,40 +33,57 @@ export async function decrypt(session: string | undefined = '') {
 
 export async function createSession(userId: string, isAdmin: boolean, tenantId: string, stripeSubscriptionId: string | null) {
     const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000);
+    const session = await encrypt({ userId, expiresAt, isAdmin, tenantId, stripeSubscriptionId });
 
-    if (stripeSubscriptionId) {
-        const sessionWithSubscription = await encrypt({ userId, expiresAt, isAdmin, tenantId, stripeSubscriptionId });
+    cookies().set('session', session, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: 'strict',
+        path: '/',
+    });
     
-        cookies().set('session', sessionWithSubscription, {
-            httpOnly: true,
-            secure: true,
-            expires: expiresAt,
-            sameSite: 'strict',
-            path: '/',
-        });
-    
-    } else {
-        const sessionWithoutSubscription = await encrypt({ userId, expiresAt, isAdmin, tenantId });
-
-        cookies().set('session', sessionWithoutSubscription, {
-            httpOnly: true,
-            secure: true,
-            expires: expiresAt,
-            sameSite: 'strict',
-            path: '/',
-        });
-    }
 }
 
-export async function verifySession() {
+async function authorizeSession(session: JWTPayload | null, adminOnly: boolean){
+    if (!session) return {
+        success: false,
+        message: "Unauthorized"
+    };
+    if (!(session.expiresAt instanceof Date)) {
+        throw new Error('Invalid expiresAt date');
+    }
+
+    if (adminOnly && session.isAdmin === false)return {
+        success: false,
+        message: "Unauthorized"
+    };
+    if(session.expiresAt.getTime() - SESSION_UPDATE_THRESHOLD >= Date.now() - session.expiresAt.getTime()){
+        await updateSession()
+    }
+
+    return session
+}
+
+export async function verifySession(adminOnly: boolean) {
     const cookie = cookies().get('session')?.value;
     const session = await decrypt(cookie);
 
-    if (!session?.userId) {
+    const authSession: JWTPayload = await authorizeSession(session, adminOnly)
+    
+    if (!authSession.userId) {
+        cookies().delete('session');
         redirect('/login');
     }
+    
 
-    return { isAuth: true, userId: String(session.userId), isAdmin: session.isAdmin, tenantId: session.tenantId};
+    return { 
+        isAuth: true, 
+        expiresAt: authSession.expiresAt, 
+        userId: String(authSession.userId), 
+        isAdmin: authSession.isAdmin, 
+        tenantId: authSession.tenantId
+    };
 }
 
 export async function updateSession() {

@@ -71,7 +71,7 @@ export async function registerUser(state: AuthFormState, formData: FormData){
     }
 
 
-    return redirect('/settings/account')
+    redirect('/settings/account')
 
 
 }
