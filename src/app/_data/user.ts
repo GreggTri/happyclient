@@ -2,33 +2,22 @@
 import "server-only"
 
 import { prisma } from "@/utils/prisma";
-import { updateSession, verifySession } from "@/app/_lib/session";
 import { cache } from 'react'
-import { SESSION_UPDATE_THRESHOLD } from "../_lib/constants";
+import { verifySession } from "../_lib/session";
 
 export const fetchUser = cache(async () => {
 
-    const {isAuth, userId, tenantId, expiresAt} = await verifySession(false)
-    if (!isAuth) return {
-        success: false,
-        user: null,
-        error: "Unauthorized!"
-    };
-    if (!(expiresAt instanceof Date)) {
-        throw new Error('Invalid expiresAt date');
-    }
-    if(expiresAt.getTime() - SESSION_UPDATE_THRESHOLD >= Date.now() - expiresAt.getTime()){
-        await updateSession()
-    }
+    const session = await verifySession(false)
+    if (!session) return null;
 
     try {
         await prisma.$connect()
 
         const user = await prisma.user.findUnique({
             where: {
-                id: userId,
+                id: session.userId,
                 org: {
-                    id: String(tenantId)
+                    id: String(session.tenantId)
                 }
             },
             select: {
@@ -108,8 +97,6 @@ export const fetchUsers = cache(async (q: string, page: number) => {
                 org: {
                     id: String(tenantId)
                 }
-
-                
             },
             
         })
@@ -129,7 +116,10 @@ export const fetchUsers = cache(async (q: string, page: number) => {
                         contains: q,
                         mode: 'insensitive'
                     }}
-                ]
+                ],
+                org: {
+                    id: String(tenantId)
+                }
             },
             select: {
                 id: true,

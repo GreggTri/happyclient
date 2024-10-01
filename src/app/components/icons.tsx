@@ -22,6 +22,7 @@ import {
     Search,
     Trash,
     UserPen,
+    Send,
     ChevronDown,
     Menu,
     Twitter,
@@ -35,6 +36,7 @@ import {
   export const Icons = {
     logo: Command,
     Search: Search,
+    Send: Send,
     close: X,
     spinner: Loader2,
     chevronLeft: ChevronLeft,

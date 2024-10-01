@@ -1,3 +1,6 @@
+// Explicitly set the runtime for middleware to Edge
+export const runtime = 'experimental-edge'; // Separate the runtime key
+
 'use server'
 import 'server-only'
 
@@ -32,21 +35,8 @@ export default async function middleware(req: NextRequest) {
     
     return NextResponse.redirect(new URL('/login', req.nextUrl), { status: 303 });
   }
-    
-
-  // Check if the session is about to expire (within the threshold)
-  // const timeRemaining = Date.now() - new Date(session.exp!).getTime();
-
-  // if (timeRemaining < (session.exp! - SESSION_UPDATE_THRESHOLD)) {
-  //   // Update session (create a new one)
-    
-  //   await updateSession()
-
-  // }
 
   return NextResponse.next();
-     
-  
 }
 
 // Apply middleware to specific routes

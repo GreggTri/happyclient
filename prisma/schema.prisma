@@ -14,38 +14,58 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  tenantId String @map("orgId") @db.ObjectId
-  email     String @unique
-  password  String 
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId  String   @map("orgId") @db.ObjectId
+  email     String   @unique
+  password  String
   //session   Session?
   firstName String?
   lastName  String?
-  role      String @default("member")
-  isAdmin   Boolean @default(false)
+  role      String   @default("member")
+  isAdmin   Boolean  @default(false)
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
-  
-  
-  org       Org    @relation(fields: [tenantId], references: [id])
+
+  resetPassLinks ResetPassLinks[]
+
+  org Org @relation(fields: [tenantId], references: [id])
+
   @@map("users")
 }
 
-model Org{
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  companyName String
-  address Address?
+type ResetPassLinks {
+  email         String
+  token         String
+  used          Boolean
+  resendEmailId String
+  expiresAt     DateTime
+}
+
+model Org {
+  id                     String    @id @default(auto()) @map("_id") @db.ObjectId
+  companyName            String
+  address                Address?
+  invites                Invites[]
+  roles                  Roles[]
   stripeCustomerId       String?   @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
-  updatedAt DateTime @updatedAt 
-  createdAt DateTime @default(now())
+  resendDomainId         String?   @unique
+  updatedAt              DateTime  @updatedAt
+  createdAt              DateTime  @default(now())
 
-  roles Roles[]
   users User[]
 
   @@map("orgs")
+}
+
+type Invites {
+  email         String
+  token         String
+  used          Boolean  @default(false)
+  resendEmailId String
+  expiresAt     DateTime
 }
 
 // Address is an embedded document in Org

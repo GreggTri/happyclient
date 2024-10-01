@@ -3,10 +3,10 @@ import "server-only"
 
 //import { prisma } from "@/utils/prisma";
 import { verifySession } from "@/app/_lib/session";
-import { cache } from 'react'
+
 import { prisma } from "@/utils/prisma";
 
-export const getRoles = cache(async() => {
+export const getRoles = async() => {
     //this function handles all verification/authorization
     const session = await verifySession(true)
     if (!session) return null;
@@ -34,4 +34,4 @@ export const getRoles = cache(async() => {
             error: "something went wrong trying to grab roles!"
         }
     }
-})
+}

@@ -2,10 +2,11 @@
 
 import { fetchUsers } from "@/app/_data/user";
 import Search from "./search";
-import Link from "next/link";
 import Pagination from "@/app/components/pagination";
 import User from "./user";
 import { Icons } from "@/app/components/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { sendUserInvite } from "./actions";
 
 interface user {
   id: string
@@ -28,9 +29,17 @@ const TeamSettingsPage = async ({ searchParams }: {searchParams: any}) => {
       <div className="rounded-lg  bg-BLACK p-5 mt-5">
             <div className="flex items-center justify-between">
                 <Search placeholder="Search..."/>
-                <Link href="/dashboard/users/add">
-                    <button className="p-2 bg-primary rounded-md flex flex-row justify-center items-center text-sm text-BLACK"><Icons.add width={20} height={20}/>Add New</button>
-                </Link>
+                <Popover>
+                    <PopoverTrigger className='flex flex-row items-center gap-1 p-2 bg-primary rounded-md justify-center text-sm text-BLACK'><Icons.add width={20} height={20}/>Invite</PopoverTrigger>
+                    <PopoverContent className='bg-black'>
+                        <div >
+                            <form action={sendUserInvite} className='flex flex-row gap-2'>
+                                <input type="text" name='email' className="rounded-md px-1 bg-BLACK" placeholder="Email"/>
+                                <button className='flex flex-row justify-center items-center bg-primary text-BLACK rounded-md px-1 py-1 gap-1'>Send<Icons.Send width={15} height={15}/></button>
+                            </form>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
 
             <table className='w-full mt-4'>

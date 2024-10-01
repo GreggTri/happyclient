@@ -1,11 +1,10 @@
 'use server'
 
-import { deleteUser, updateUserAdmin, updateUserRole } from './actions';
+import { AddRoleToOrg, deleteUser, updateUserAdmin, updateUserRole } from './actions';
 import { Icons } from '@/app/components/icons';
 import { Switch } from '@/app/components/ui/switch';
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
 import { getRoles } from '@/app/_data/org';
-import Role from './role';
 
 interface user {
     id: string
@@ -20,7 +19,9 @@ interface UserProps {
     user: user;
 }
 
-type RoleType = string;
+type RoleType = {
+    name: string;
+};
 
 const User: React.FC<UserProps> = async ({user}: UserProps) => {
     const roles = await getRoles()
@@ -42,18 +43,23 @@ const User: React.FC<UserProps> = async ({user}: UserProps) => {
                 <Popover>
                     <PopoverTrigger className='flex flex-row items-center gap-1'>{user.role}<Icons.ChevronDown width={16} height={16}/></PopoverTrigger>
                     <PopoverContent className='bg-black space-y-2'>
-                        <div>
-                            Search
-                        </div>
-                        <div>
-                            <form action={updateUserRole}>
-                                <input id='userId' name='userId' type="hidden" value={user.id} />
-                                {roles!.map((role: RoleType) => (
-                                    // TODO::: add input or button to grab role from 
-                                    //whatever is being clicked on and update role with the value
-                                    <Role key={role} role={role}/>
-                                ))}
+                        <div className='flex flex-row'>
+                            <form action={AddRoleToOrg} className='flex flex-row gap-2'>
+                                <input type="text" name='newRole' className='rounded-md px-1 bg-BLACK'/>
+                                <button className=' bg-primary text-BLACK rounded-md px-1 py-1'>add Role</button>
                             </form>
+                        </div>
+
+                        <div className="w-px bg-gray-300 "></div>
+                        
+                        <div>
+                            {roles!.roles.map((role: RoleType) => (
+                                <form action={updateUserRole} key={role.name} className='px-1'>
+                                    <input id="userId" name="userId" type="hidden" value={user.id} />
+                                    <input id="role" name="role" type="hidden" value={role.name} />
+                                    <button type="submit">{role.name}</button>
+                                </form>
+                            ))}
                         </div>
                     </PopoverContent>
                 </Popover>

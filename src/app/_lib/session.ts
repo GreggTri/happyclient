@@ -33,7 +33,7 @@ export async function decrypt(session: string | undefined = '') {
 
 export async function createSession(userId: string, isAdmin: boolean, tenantId: string, stripeSubscriptionId: string | null) {
     const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000);
-    const session = await encrypt({ userId, expiresAt, isAdmin, tenantId, stripeSubscriptionId });
+    const session = await encrypt({ userId, isAdmin, tenantId, stripeSubscriptionId });
 
     cookies().set('session', session, {
         httpOnly: true,
@@ -50,18 +50,14 @@ async function authorizeSession(session: JWTPayload | null, adminOnly: boolean){
         success: false,
         message: "Unauthorized"
     };
-    if (!(session.expiresAt instanceof Date)) {
-        throw new Error('Invalid expiresAt date');
-    }
-
     if (adminOnly && session.isAdmin === false)return {
         success: false,
         message: "Unauthorized"
     };
-    if(session.expiresAt.getTime() - SESSION_UPDATE_THRESHOLD >= Date.now() - session.expiresAt.getTime()){
+
+    if(session.exp! - SESSION_UPDATE_THRESHOLD >= Date.now() - session.exp!){
         await updateSession()
     }
-
     return session
 }
 
@@ -94,14 +90,18 @@ export async function updateSession() {
         return null;
     }
 
-    const expires = new Date(Date.now() + 4 * 60 * 60 * 1000);
-    cookies().set('session', session, {
-        httpOnly: true,
-        secure: true,
-        expires: expires,
-        sameSite: 'strict',
-        path: '/',
-    });
+    if(payload.exp! - SESSION_UPDATE_THRESHOLD >= Date.now() - payload.exp!){
+    
+        const expires = new Date(Date.now() + 4 * 60 * 60 * 1000);
+
+        cookies().set('session', session, {
+            httpOnly: true,
+            secure: true,
+            expires: expires,
+            sameSite: 'strict',
+            path: '/',
+        });
+    }
 }
 
 export async function deleteSession() {
