@@ -1,5 +1,5 @@
 import NavBar from "@/app/components/navbar";
-import mouseIcon from '/src/assets/whiteMouse.svg';
+import mouseIcon from '/public/assets/whiteMouse.svg';
 import Image from "next/image";
 import { Icons } from "./components/icons";
 import Link from "next/link";

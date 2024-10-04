@@ -55,7 +55,9 @@ model Org {
   updatedAt              DateTime  @updatedAt
   createdAt              DateTime  @default(now())
 
-  users User[]
+  users   User[]
+  surveys Survey[]
+  surveyResponses SurveyResponse[]
 
   @@map("orgs")
 }
@@ -78,4 +80,46 @@ type Address {
 
 type Roles {
   name String
+}
+
+model Survey {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  tenantId          String   @map("orgId") @db.ObjectId
+  surveyTitle       String
+  surveyDescription String
+  backgroundColor   String   @default("#ffffff")
+  textColor         String   @default("#000000")
+  primaryColor      String   @default("#F4E300")
+  isPublished       Boolean  @default(false)
+  isDeleted         Boolean  @default(false)
+  domain            String
+  fields            Fields[]
+  updatedAt              DateTime  @updatedAt
+  createdAt              DateTime  @default(now())
+
+  org Org @relation(fields: [tenantId], references: [id])
+  surveyResponses SurveyResponse[]
+}
+
+type Fields {
+  fieldQuestion  String
+  fieldInputType String     // E.g., text, radio, checkbox, select, date
+  options        Option[]  // Optional; only needed for radio, checkbox, or select fields
+  position       Int
+}
+
+type Option {
+  value   String  // The actual value to be submitted
+  label   String  // The label displayed in the UI
+}
+
+model SurveyResponse {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  surveyId    String   @db.ObjectId
+  tenantId          String   @map("orgId") @db.ObjectId
+  responses   Json
+  submittedAt DateTime @default(now())
+
+  survey      Survey   @relation(fields: [surveyId], references: [id])
+  org Org @relation(fields: [tenantId], references: [id])
 }

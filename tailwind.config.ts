@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'paper': "url('/assets/paper.svg')",
+      },
       animation: {
         bobbing: 'bobbing 0.5s ease-in-out infinite',
       },
