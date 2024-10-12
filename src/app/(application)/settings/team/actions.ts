@@ -5,7 +5,7 @@ import { verifySession } from "@/app/_lib/session";
 import { prisma } from "@/utils/prisma";
 import { revalidatePath } from 'next/cache';
 import { Resend } from 'resend';
-import InviteUserEmail from '@/app/components/emailTemplates/inviteuser';
+import InviteUserEmail from '@/app/_components/emailTemplates/inviteuser';
 import { generateToken } from '@/app/_lib/tokens';
 import { AddRoleSchema } from '@/app/_lib/definitions';
 const resend = new Resend(process.env.RESENT_API_KEY);

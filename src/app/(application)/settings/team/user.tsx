@@ -1,9 +1,9 @@
 'use server'
 
 import { AddRoleToOrg, deleteUser, updateUserAdmin, updateUserRole } from './actions';
-import { Icons } from '@/app/components/icons';
-import { Switch } from '@/app/components/ui/switch';
-import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
+import { Icons } from '@/app/_components/icons';
+import { Switch } from '@/app/_components/ui/switch';
+import { Popover, PopoverContent, PopoverTrigger } from '@/app/_components/ui/popover';
 import { getRoles } from '@/app/_data/org';
 
 interface user {

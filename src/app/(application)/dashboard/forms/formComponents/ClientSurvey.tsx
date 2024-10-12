@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { submitSurveyResponse } from "../[domain]/formActions";
+import { submitSurveyResponse } from "../../../[domain]/formActions";
 
 interface Field {
   id: string;

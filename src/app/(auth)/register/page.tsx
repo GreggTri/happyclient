@@ -2,10 +2,10 @@
 import Link from "next/link"
 
 import { cn } from "@/app/lib/utils"
-import { buttonVariants } from "@/app/components/ui/button"
-import { Icons } from "@/app/components/icons"
-import { Label } from "@/app/components/ui/label"
-import { Input } from "@/app/components/ui/input"
+import { buttonVariants } from "@/app/_components/ui/button"
+import { Icons } from "@/app/_components/icons"
+import { Label } from "@/app/_components/ui/label"
+import { Input } from "@/app/_components/ui/input"
 
 import { registerUser } from '@/app/(auth)/register/actions'
 import { useFormState, useFormStatus } from "react-dom"

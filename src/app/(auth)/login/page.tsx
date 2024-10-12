@@ -2,9 +2,9 @@ import { Metadata } from "next"
 import Link from "next/link"
 
 import { cn } from "@/app/lib/utils"
-import { buttonVariants } from "@/app/components/ui/button"
-import { Icons } from "@/app/components/icons"
-import { UserAuthForm } from "@/app/components/user-auth-form"
+import { buttonVariants } from "@/app/_components/ui/button"
+import { Icons } from "@/app/_components/icons"
+import { UserAuthForm } from "@/app/_components/user-auth-form"
 
 export const metadata: Metadata = {
   title: "Login | Happy Client",

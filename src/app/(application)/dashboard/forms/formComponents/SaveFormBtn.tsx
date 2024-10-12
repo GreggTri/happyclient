@@ -2,67 +2,64 @@
 
 import React, { useTransition } from "react";
 import { saveSurvey } from "../actions";
+import useDesigner from "./hooks/UseDesigner";
+import { Button } from "@/components/ui/button";
+import { HiSaveAs } from 'react-icons/hi'
+import { toast } from "@/hooks/use-toast";
+import { Icons } from "@/app/_components/icons";
 
+function SaveFormBtn({ surveyId }: { surveyId: string }) {
 
-interface Field {
-  fieldQuestion: string;
-  fieldInputType: string;
-  options: string[];
-  position: number;
-}
+  const { elements } = useDesigner()
+  const [loading, startTransition] = useTransition();
 
-interface Survey {
-  id?: string;
-  surveyTitle: string;
-  surveyDescription: string | null;
-  isPublished: boolean;
-  fields: Field[];
-  backgroundColor: string;
-  textColor: string;
-  primaryColor: string;
-}
+  const updateSurveyContent = async () => {
+    try {
+      
+      const JsonElements = JSON.stringify(elements)
+      const savedSurvey = await saveSurvey(surveyId, JsonElements)
 
-interface SaveFormBtnProps {
-  survey?: Survey;
-  surveyTitle: string;
-  surveyFields: Field[];
-  backgroundColor: string;
-  textColor: string;
-  primaryColor: string;
-}
+      if( savedSurvey && 'id' in savedSurvey){
+  
+        toast({
+          title: "Success!",
+          description: `Survey: ${savedSurvey.surveyTitle} has been saved!`,
+          variant: "destructive",
+          className: "bg-green-500 border-none"
+        })
 
-function SaveFormBtn({
-  survey,
-  surveyTitle,
-  surveyFields,
-  backgroundColor,
-  textColor,
-  primaryColor,
-}: SaveFormBtnProps) {
-  const [isPending, startTransition] = useTransition();
+      } else {
+        throw new Error("Something went wrong!")
+      }
 
-  const handleSave = () => {
-    startTransition(async () => {
-      await saveSurvey({
-        id: survey?.id,
-        surveyTitle,
-        fields: surveyFields,
-        backgroundColor,
-        textColor,
-        primaryColor,
-      });
-      alert("Survey saved successfully!");
-    });
-  };
-
+    } catch(error){
+      
+      toast({
+        title: "Error: Survey couldn't be saved!",
+        description: "Something went wrong! Please try again later and/or contact support!",
+        variant: "destructive",
+        className: "bg-red-500 border-none"
+      })
+    }
+  }
   return (
-    <button
-      onClick={handleSave}
-      disabled={isPending}
-      className="bg-blue-500 text-white px-2 rounded-md text-sm"
+    <Button 
+      variant={'outline'} 
+      className="gap-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-WHITE"
+      disabled={loading}
+      onClick={() => {
+        startTransition(updateSurveyContent)
+      }}
     >
-      {isPending ? "Saving..." : "Save"}
-    </button>
+      {loading ? 
+        <Icons.spinner className='animate-spin' width={15} height={15}/> 
+      : 
+        <>
+          <HiSaveAs className="h-4 w-4"/>
+          <span>Save</span>
+        </>
+      }
+    </Button>
   );
 }
 

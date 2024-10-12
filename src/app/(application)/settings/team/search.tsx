@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Icons } from "@/app/components/icons";
+import { Icons } from "@/app/_components/icons";
 import { useDebouncedCallback } from "use-debounce"
 
 interface SearchProps {

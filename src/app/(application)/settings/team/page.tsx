@@ -2,10 +2,10 @@
 
 import { fetchUsers } from "@/app/_data/user";
 import Search from "./search";
-import Pagination from "@/app/components/pagination";
+import Pagination from "@/app/_components/pagination";
 import User from "./user";
-import { Icons } from "@/app/components/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Icons } from "@/app/_components/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/_components/ui/popover";
 import { sendUserInvite } from "./actions";
 
 interface user {

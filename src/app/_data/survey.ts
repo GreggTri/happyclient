@@ -7,7 +7,7 @@ export const getOrgSurveys = cache(async(q: string, page: number) => {
     const session = await verifySession(false) //false means user does not need to be admin to hit endpoint
     if (!session) return null;
 
-    const ITEM_PER_PAGE = 9;
+    const ITEM_PER_PAGE = 5;
 
     try{
 
@@ -47,8 +47,8 @@ export const getOrgSurveys = cache(async(q: string, page: number) => {
                 id: true,
                 surveyTitle: true,
                 surveyDescription: true,
-                isPublished: true
-                
+                surveyState: true,
+                createdAt: true
             },
             take: ITEM_PER_PAGE,
             skip: ITEM_PER_PAGE * (page - 1)
@@ -72,7 +72,7 @@ export const getOrgSurveys = cache(async(q: string, page: number) => {
 })
 
 
-export const getSurvey = cache(async(surveyId: string | undefined) => {
+export const getSurvey = cache(async(surveyId: string) => {
 
     const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
     if (!session) return null;
@@ -84,28 +84,16 @@ export const getSurvey = cache(async(surveyId: string | undefined) => {
                     id: surveyId,
                     org: {
                         id: String(session.tenantId)
-                    }
-                },
-                select: {
-                    id: true,
-                    surveyTitle: true,
-                    surveyDescription: true,
-                    isPublished: true,
-                    fields: true,
-                    tenantId: true
-                    
+                    },
+                    surveyState: "DRAFT"
                 }
             })
-            revalidatePath('/dashboard/forms/formBuilder')
-    
+            
             return surveyData;
-        } else {
-            //No Id, No Problem
-            revalidatePath('/dashboard/forms/formBuilder')
         }
         
     } catch(error){
         console.log(error);
-        
+        throw new Error('Could not get Survey Data')
     }
 })

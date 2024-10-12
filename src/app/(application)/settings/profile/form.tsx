@@ -2,7 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { updateName } from "./actions";
-import { Icons } from "@/app/components/icons";
+import { Icons } from "@/app/_components/icons";
 
 interface User {
     id?: string | null | undefined

@@ -1,17 +1,32 @@
 "use server"
 
 import { getOrgSurveys } from "@/app/_data/survey";
-import Pagination from "@/app/components/pagination";
+import Pagination from "@/app/_components/pagination";
 import Search from "../../settings/team/search";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/components/ui/card";
-import { Icons } from "@/app/components/icons";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/_components/ui/card";
+import { Badge } from "@/components/ui/badge"
+import CreateSurveyBtn from "./formComponents/CreateSurveyBtn";
+import { formatDistance } from "date-fns"
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { FaEdit } from 'react-icons/fa'
+import { Icons } from "@/app/_components/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/_components/ui/popover";
+import RenameSurveyBtn from "./formComponents/RenameSurveyBtn";
+import { State } from '@prisma/client';
+import CopySurveyBtn from "./formComponents/CopySurveyBtn";
+import ArchiveSurveyBtn from "./formComponents/ArchiveSurveyBtn";
+import { Separator } from "@/components/ui/separator";
 
+type StateType = keyof typeof State;
 interface Survey {
   id: string
   surveyTitle: string
   surveyDescription: string | null
+  surveyState: StateType
+  createdAt: Date
 }
+
 
 const FormsPage = async ({ searchParams }: {searchParams: any}) => {
     const q = searchParams?.q || "";
@@ -30,34 +45,68 @@ const FormsPage = async ({ searchParams }: {searchParams: any}) => {
           </div>
         </div>
         
-        <hr className="my-4"/>
+        <Separator orientation='horizontal' className='my-4 bg-WHITE/20'/>
+        
         
         <div className="flex flex-col container my-8">
-          <div className="flex flex-col md:flex-row flex-wrap gap-4">
-            <Link href="/dashboard/forms/create">
-              <Card className="flex flex-col justify-center items-center cursor-default border-primary text-primary">
-                <CardHeader>
-                  <CardTitle className="flex justify-center">
-                    <Icons.FilePlus width={20} height={20} />
-                  </CardTitle>
-                  <CardDescription>Create A New Survey</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
+          <div className="flex flex-col md:flex-row flex-wrap gap-6 justify-center">
+            
+          <div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 ">
+            <CreateSurveyBtn />
+          </div>
+            
             {orgSurveyData?.success && orgSurveyData.count > 0 ? (
               orgSurveyData.getOrgSurveys!.map((survey: Survey) => (
-                <Card key={survey.id} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
+                <Card key={survey.id} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 border-WHITE/20">
                   <CardHeader>
-                    <CardTitle>{survey.surveyTitle}</CardTitle>
-                    <CardDescription>
-                      {survey.surveyDescription ? survey.surveyDescription : "No description set."}
+                    <CardTitle className="flex flex-row items-center gap-2 justify-between">
+                      <span className="truncate font-bold">{survey.surveyTitle}</span>
+                      
+                      <div className="flex flex-row gap-2 justify-center items-center">
+                        {survey.surveyState === "DRAFT" && <Badge className="bg-red-500" variant={"destructive"}>Draft</Badge>}
+                        {survey.surveyState === "PUBLISHED" && <Badge className="bg-green-500">Published</Badge>}
+                        {survey.surveyState === "ARCHIVED" && <Badge className="border-red-500 text-red-500 bg-transparent hover:bg-transparent">Archived</Badge>}
+                        <Popover>
+                          <PopoverTrigger>
+                              <Icons.ellipsis width={20} height={20}/>
+                          </PopoverTrigger>
+                          <PopoverContent className="flex flex-col bg-black text-xs cursor-default space-y-2 m-0 p-2 items-end">
+                            <CopySurveyBtn surveyId={survey.id}/>
+                            <RenameSurveyBtn survey={survey}/>
+                            <ArchiveSurveyBtn surveyId={survey.id}/>
+                          </PopoverContent>
+                        </Popover>
+                        
+                      </div>
+                      
+                    </CardTitle>
+                    <CardDescription className="flex flex-col space-y-2 text-WHITE/50">
+                      <span className="underline underline-offset-2">
+                        {formatDistance(survey.createdAt, new Date(), {
+                          addSuffix: true
+                        })}
+                      </span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p>Card Content</p>
+                    {survey.surveyDescription ? survey.surveyDescription : "No description set."}
                   </CardContent>
                   <CardFooter>
-                    <p>Card Footer</p>
+                      {(survey.surveyState !== "DRAFT") && 
+                        <Button asChild variant={'outline'} className="w-full border-primary text-primary text-base gap-3">
+                          <Link href={`dashboard/forms/submissions/${survey.id}`}>
+                              <span>View submissions</span> <Icons.laptop/>
+                          </Link>
+                        </Button>
+                      }
+                      {survey.surveyState === "DRAFT" &&
+                        <Button asChild className="w-full text-BLACK text-base gap-3">
+                          <Link href={`/dashboard/forms/builder/${survey.id}`}>
+                            <span>Edit form</span> <FaEdit/>
+                          </Link>
+                        </Button>
+                      }
+                      
                   </CardFooter>
                 </Card>
               ))

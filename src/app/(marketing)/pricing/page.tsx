@@ -1,9 +1,9 @@
 import Link from "next/link"
 
 import { cn } from "@/app/lib/utils"
-import { buttonVariants } from "@/app/components/ui/button"
-import { Icons } from "@/app/components/icons"
-import NavBar from "@/app/components/navbar"
+import { buttonVariants } from "@/app/_components/ui/button"
+import { Icons } from "@/app/_components/icons"
+import NavBar from "@/app/_components/navbar"
 
 export const metadata = {
   title: "Pricing | Happy Client",

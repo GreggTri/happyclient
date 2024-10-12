@@ -3,7 +3,7 @@
 //import { cn } from "@/app/lib/utils"
 //import { buttonVariants } from "@/app/components/ui/button"
 //import { Icons } from "@/app/components/icons"
-import NavBar from "@/app/components/navbar"
+import NavBar from "@/app/_components/navbar"
 
 export const metadata = {
   title: "Book a Demo | Happy Client",

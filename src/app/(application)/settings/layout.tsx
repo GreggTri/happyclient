@@ -1,4 +1,4 @@
-import SettingsNavBar from "@/app/components/settingsnav";
+import SettingsNavBar from "@/app/_components/settingsnav";
 
 interface LayoutProps {
     children: React.ReactNode;
