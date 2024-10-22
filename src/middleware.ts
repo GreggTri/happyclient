@@ -39,7 +39,7 @@ export default async function middleware(req: NextRequest) {
 
     // Handle custom domain-specific logic
     if (isCustomDomain || customDomain) {
-      const customer = await getCustomerByDomain(customDomain); // Fetch customer data by custom domain
+      const customer = await getSurveyDataByToken(token); // Fetch customer data by custom domain
 
       if (!customer) {
         return NextResponse.redirect(new URL('/404', req.nextUrl), { status: 404 });
@@ -47,7 +47,7 @@ export default async function middleware(req: NextRequest) {
 
       // Optionally: Handle subdomain-specific logic if applicable
       if (subdomain && subdomain !== 'www') {
-        const subdomainCustomer = await getCustomerBySubdomain(subdomain);
+        const subdomainCustomer = await getSurveyDataByToken(token);
 
         if (!subdomainCustomer) {
           return NextResponse.redirect(new URL('/404', req.nextUrl), { status: 404 });

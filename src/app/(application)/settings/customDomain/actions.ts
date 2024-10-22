@@ -1,107 +1,61 @@
 "use server"
 
+import { verifySession } from "@/app/_lib/session";
 import { revalidatePath } from "next/cache";
 import fetch from 'node-fetch';
 
-const subdomainRegex = /^[a-zA-Z0-9-]+$/;
+//const subdomainRegex = /^[a-zA-Z0-9-]+$/;
 
+const VERCEL_API_URL = 'https://api.vercel.com';
+const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
+const VERCEL_TOKEN = process.env.VERCEL_API_TOKEN;
 
-export const createSites = async (
-    site_name: string,
-    site_description: string,
-    site_subdomain: string,
-    site_logo: string
-  ) => {
-  
-    if (site_subdomain.toLocaleLowerCase() === "www") {
-      return {
-        message: "Not allowed to use www as a subdomain",
-      };
-    }
-  
-    // Validate the subdomain
-    if (!subdomainRegex.test(site_subdomain)) {
-      return {
-        message: "Subdomain must only contain alphanumeric characters or hyphens, and must not contain '.', '#', or '$'",
-      };
-    }
-  
-    if (site_subdomain.length < 1 || site_subdomain.length > 63) {
-      return {
-        message: "Subdomain must be between 1 and 63 characters",
-      };
-    }
-  
-    const { userId } = auth();
-  
-    if (!userId) {
-      return null;
-    }
-  
-    const cookieStore = cookies();
-  
-    const supabase = createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SECRET_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
-  
+// Function to add a domain (either a subdomain of your main domain or an entire custom domain)
+export async function addDomain(subdomain: string, domain?: string) {
+    const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
+    if (!session) return new Error("Unauthorized");
+    
     try {
-      const { data, error } = await supabase
-        .from("sites")
-        .insert([
-          {
-            user_id: userId,
-            site_name,
-            site_description,
-            site_subdomain: site_subdomain.toLowerCase(),
-            site_logo,
-          },
-        ])
-        .select();
-      if (error?.code) {
-        return {
-          error,
-        };
-      }
-      revalidatePath("/settings/customdomain");
-  
-      return data;
-    } catch (error: any) {
-      return error;
+        let fullDomain = '';
+
+        const baseDomain = process.env.BASE_DOMAIN
+
+        // Scenario 1: Subdomain of your main domain (e.g., subdomain.gethappyclient.com)
+        if (!domain) {
+        fullDomain = `${subdomain}.${baseDomain}`;
+        } 
+        // Scenario 2: Custom domain with subdomain (e.g., subdomain.customerdomain.com)
+        else if (domain && subdomain) {
+        fullDomain = `${subdomain}.${domain}`;
+        } 
+        // Scenario 3: Custom domain without subdomain (e.g., customerdomain.com)
+        else if (domain && !subdomain) {
+        fullDomain = domain;
+        }
+
+        // Call the Vercel API to add the domain (subdomain or custom domain)
+        const response = await fetch(`${VERCEL_API_URL}/v9/projects/${VERCEL_PROJECT_ID}/domains`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${VERCEL_TOKEN}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: fullDomain, 
+        }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+        throw new Error(`Failed to add domain: `);
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error adding domain:', error);
+        throw error;
     }
-  };
+}
 
-
- 
-
-  const VERCEL_API_URL = 'https://api.vercel.com';
-  const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
-  const VERCEL_TOKEN = process.env.VERCEL_API_TOKEN;
-  
-  export async function addCustomDomain(domain: string) {
-    const response = await fetch(`${VERCEL_API_URL}/v9/projects/${VERCEL_PROJECT_ID}/domains`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${VERCEL_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: domain, // Customer's domain or subdomain
-      }),
-    });
-  
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Failed to add domain: ${error.message}`);
-    }
-  
-    return await response.json();
-  }
   

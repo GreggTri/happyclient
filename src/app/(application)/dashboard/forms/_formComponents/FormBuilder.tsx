@@ -67,7 +67,7 @@ function FormBuilder({ survey }: {survey: Survey}){
                 <div className="flex flex-row flex-grow bg-black/20 bg-paper gap-4 items-stretch justify-between">
 
                     <div>
-
+                    {/* this empty div is to push Designer to middle */}
                     </div>
                     <div className="py-2">
                         <Designer/>

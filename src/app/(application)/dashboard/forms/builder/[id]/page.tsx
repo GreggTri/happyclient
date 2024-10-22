@@ -1,7 +1,7 @@
 "use server"
 
 import { getSurvey } from "@/app/_data/survey"
-import FormBuilder from "../../formComponents/FormBuilder"
+import FormBuilder from "../../_formComponents/FormBuilder"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 

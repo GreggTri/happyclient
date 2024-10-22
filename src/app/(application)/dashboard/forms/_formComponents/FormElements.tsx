@@ -1,7 +1,12 @@
+import { SeparatorFieldFormElement } from "./fields/SeparatorField";
+import { SpacerFieldFormElement } from "./fields/SpacerField";
+import { SubtitleFieldFormElement } from "./fields/SubtitleField";
 import { TextFieldFormElement } from "./fields/TextField";
+import { TitleFieldFormElement } from "./fields/TitleField";
 
-export type ElementsType = "TextField"
+export type ElementsType = "TextField" | "TitleField" | "SubtitleField" | "SeparatorField" | "SpacerField"
 
+export type SubmitFunction = (key: string, value: string) => void;
 
 export type FormElement = {
     type: ElementsType;
@@ -18,10 +23,15 @@ export type FormElement = {
     }>;
     formComponent: React.FC<{
         elementInstance: FormElementInstance;
+        submitValue?: SubmitFunction;
+        isInvalid?: boolean
+        defaultValue?: string
     }>;
     propertiesComponent: React.FC<{
         elementInstance: FormElementInstance;
     }>;
+
+    validate: (formElement: FormElementInstance, currentValue: string) => boolean;
 }
 
 export type FormElementInstance = {
@@ -36,6 +46,9 @@ type FormElementsType = {
 }
 
 export const FormElements: FormElementsType = {
-    TextField: TextFieldFormElement
-    
+    TextField: TextFieldFormElement,
+    TitleField: TitleFieldFormElement,
+    SubtitleField: SubtitleFieldFormElement,
+    SeparatorField: SeparatorFieldFormElement,
+    SpacerField: SpacerFieldFormElement
 };

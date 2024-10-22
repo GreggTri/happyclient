@@ -43,7 +43,9 @@ type ResetPassLinks {
 
 model Org {
   id                     String    @id @default(auto()) @map("_id") @db.ObjectId
-  companyName            String
+  companyName            String    @unique
+  domain                 String
+  isUsingCustomDomain    Boolean   @default(false)
   address                Address?
   invites                Invites[]
   roles                  Roles[]
@@ -51,13 +53,14 @@ model Org {
   stripeSubscriptionId   String?   @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
-  resendDomainId         String?   @unique
+  resendDomainId         String?
   updatedAt              DateTime  @updatedAt
   createdAt              DateTime  @default(now())
 
-  users           User[]
-  surveys         Survey[]
-  surveyResponses SurveyResponse[]
+  users      User[]
+  surveys    Survey[]
+  SurveyData SurveyData[]
+  SurveySend SurveySend[]
 
   @@map("orgs")
 }
@@ -92,13 +95,15 @@ model Survey {
   textColor         String  @default("#000000")
   primaryColor      String  @default("#F4E300")
 
-  domain    String?
   fields    Fields[]
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
-  org             Org              @relation(fields: [tenantId], references: [id])
-  surveyResponses SurveyResponse[]
+  org        Org          @relation(fields: [tenantId], references: [id])
+  SurveyData SurveyData[]
+  SurveySend SurveySend[]
+
+  @@map("surveys")
 }
 
 enum State {
@@ -110,7 +115,7 @@ enum State {
 type Fields {
   id            String
   fieldQuestion String
-  fieldType     String // E.g., text, radio, checkbox, select, date
+  fieldType     String //TODO:: will be enum for Layout field or Survey Field. surveyFields hold questions.
   placeholder   String
   helperText    String
   options       Option[] // Optional; only needed for radio, checkbox, or select fields
@@ -123,13 +128,61 @@ type Option {
   label String // The label displayed in the UI
 }
 
-model SurveyResponse {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  surveyId    String   @db.ObjectId
-  tenantId    String   @map("orgId") @db.ObjectId
-  responses   Json
-  submittedAt DateTime @default(now())
+model SurveyData {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  surveyId          String          @db.ObjectId
+  tenantId          String          @map("orgId") @db.ObjectId
+  token             String          @unique
+  resendEmailId     String          @unique
+  openedEmail       Boolean         @default(false)
+  clickedSurveyLink Boolean         @default(false)
+  responses         Json
+  attachedUsers     AttachedUsers[]
+  expirationDate    ExpiryEnum
+  submittedAt       DateTime
+  createdAt         DateTime        @default(now())
 
   survey Survey @relation(fields: [surveyId], references: [id])
   org    Org    @relation(fields: [tenantId], references: [id])
+}
+
+model SurveySend {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  surveyId       String       @db.ObjectId
+  tenantId       String       @map("orgId") @db.ObjectId
+  email          String
+  scheduledSend  DateTime
+  intervalTiming IntervalEnum
+  expirationDate ExpiryEnum
+
+  attachedUsers AttachedUsers[]
+  isFinished    Boolean         @default(false)
+  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime        @default(now())
+
+  survey Survey @relation(fields: [surveyId], references: [id])
+  org    Org    @relation(fields: [tenantId], references: [id])
+
+  @@unique([surveyId, tenantId, email])
+}
+
+type AttachedUsers {
+  userId String
+  role   String
+}
+
+enum IntervalEnum {
+  ONCE
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMIANNUALY
+  ANNUALY
+}
+
+enum ExpiryEnum {
+  AFTER_1_DAY
+  AFTER_7_DAYS
+  AFTER_14_DAYS
 }

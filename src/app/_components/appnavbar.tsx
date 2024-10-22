@@ -12,7 +12,7 @@ const AppNavBar = () => {
     const isActive = (route: string) => pathname === route;
     
     return (
-        <div className="flex flex-row w-full py-3 px-[3%] sticky top-0 space-x-10 bg-background justify-start border-b border-WHITE/20 z-10">
+        <div className="flex flex-row w-full py-3 px-[3%] sticky top-0 space-x-10 bg-background justify-start border-b border-WHITE/20 z-30">
             
             {/* Hamburger Menu Button (always visible) */}
             <button 
@@ -79,7 +79,7 @@ const AppNavBar = () => {
 
                 {/* Links visible only in the vertical menu */} 
                 <Link 
-                    href="/settings" 
+                    href="/settings/profile" 
                     className="text-lg hover:bg-WHITE/20 hover:px-1 hover:py-0 hover:rounded-md px-1" 
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >

@@ -97,3 +97,66 @@ export const getSurvey = cache(async(surveyId: string) => {
         throw new Error('Could not get Survey Data')
     }
 })
+
+
+export const getSurveyDetails = cache(async(surveyId: string) => {
+
+    const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
+    if (!session) return null;
+
+    try{
+        if(surveyId){
+            const surveyData = await prisma.survey.findUnique({
+                where: {
+                    id: surveyId,
+                    org: {
+                        id: String(session.tenantId)
+                    },
+                    OR : [
+                        {surveyState: 'ARCHIVED'},
+                        {surveyState: 'PUBLISHED'}
+                    ]
+                }
+            })
+            
+            return surveyData;
+        }
+        
+    } catch(error){
+        console.log(error);
+        throw new Error('Could not get Survey Data')
+    }
+})
+
+
+export const getAllSurveys = cache(async() => {
+
+    const session = await verifySession(false) //false means user does not need to be admin to hit endpoint
+    if (!session) return null;
+
+    try{
+        
+        const surveys = await prisma.survey.findMany({
+            where: {
+                org: {
+                    id: String(session.tenantId)
+                },
+                OR : [
+                    {surveyState: 'ARCHIVED'},
+                    {surveyState: 'PUBLISHED'}
+                ]
+            },
+            select: {
+                id: true,
+                surveyTitle: true
+            }
+        })
+        
+        return surveys;
+        
+        
+    } catch(error){
+        console.log(error);
+        throw new Error('Could not get list of surveys')
+    }
+})

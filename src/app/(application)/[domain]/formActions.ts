@@ -1,6 +1,6 @@
 "use server"
 
 
-export async function submitSurveyResponse(surveyId: string, responses: { [key: string]: any }){
-
+export async function submitSurveyData(token: string, jsonContent: string){
+    return;
 }

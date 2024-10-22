@@ -20,7 +20,7 @@ function SidebarBtnElement({
     return (
         <button 
             ref={draggable.setNodeRef} 
-            className={cn('flex flex-col gap-2 h-[120px] cursor-grab border rounded-md',
+            className={cn('flex flex-col gap-2 h-[100px] cursor-grab border rounded-md w-full justify-center items-center',
                 draggable.isDragging && "ring-2 ring-primary"
             )}
             {...draggable.listeners}
@@ -49,7 +49,7 @@ export function SidebarBtnElementDragOverlay({
     return (
         <button 
             ref={draggable.setNodeRef} 
-            className={'flex flex-col gap-2 h-[120px] cursor-grab border rounded-md'}
+            className={'flex flex-col gap-2 h-[100px] cursor-grab border rounded-md w-full justify-center items-center'}
         >
             <Icon className="h-8 w-8 text-primary cursor-grab"/>
             <p className="text-xs">{label}</p>

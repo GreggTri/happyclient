@@ -199,7 +199,7 @@ function DesignerElementWrapper({element}: {element: FormElementInstance}){
       ref={draggable.setNodeRef}
       {...draggable.listeners}
       {...draggable.attributes}
-      className="relative h-[120px] flex flex-col bg-black/20 text-text hover:cursor-pointer hover:bg-background rounded-md ring-1 ring-text/20 ring-inset"
+      className="relative h-[120px] mb-2 flex flex-col bg-black/20 text-text hover:cursor-pointer hover:bg-background rounded-md ring-1 ring-text/20 ring-inset"
       onMouseEnter={() => {
         setMouseIsOver(true)
       }}

@@ -55,9 +55,9 @@ async function authorizeSession(session: JWTPayload | null, adminOnly: boolean){
         message: "Unauthorized"
     };
 
-    if(session.exp! - SESSION_UPDATE_THRESHOLD >= Date.now() - session.exp!){
-        await updateSession()
-    }
+    //update after every request for a rolling 4 hour window
+    await updateSession()
+    
     return session
 }
 

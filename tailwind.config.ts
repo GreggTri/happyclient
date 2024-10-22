@@ -13,7 +13,9 @@ const config: Config = {
   			paper: 'url("/assets/paper.svg")'
   		},
   		animation: {
-  			bobbing: 'bobbing 0.5s ease-in-out infinite'
+  			bobbing: 'bobbing 0.5s ease-in-out infinite',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
   		keyframes: {
   			bobbing: {
@@ -26,43 +28,30 @@ const config: Config = {
   				'100%': {
   					transform: 'translateY(0)'
   				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
   			}
   		},
   		colors: {
   			BLACK: '#111111',
   			WHITE: '#f5f5f5',
-			primary: '#f4e300',
-  			// primary: {
-  			// 	DEFAULT: 'hsl(var(--primary))',
-  			// 	foreground: 'hsl(var(--primary-foreground))'
-  			// },
+  			primary: '#f4e300',
   			background: '#111111',
-  			text: '#f5f5f5',
-  			// secondary: {
-  			// 	DEFAULT: 'hsl(var(--secondary))',
-  			// 	foreground: 'hsl(var(--secondary-foreground))'
-  			// },
-  			// foreground: 'hsl(var(--foreground))',
-  			// card: {
-  			// 	DEFAULT: 'hsl(var(--card))',
-  			// 	foreground: 'hsl(var(--card-foreground))'
-  			// },
-  			// popover: {
-  			// 	DEFAULT: 'hsl(var(--popover))',
-  			// 	foreground: 'hsl(var(--popover-foreground))'
-  			// },
-  			// muted: {
-  			// 	DEFAULT: 'hsl(var(--muted))',
-  			// 	foreground: 'hsl(var(--muted-foreground))'
-  			// },
-  			// accent: {
-  			// 	DEFAULT: 'hsl(var(--accent))',
-  			// 	foreground: 'hsl(var(--accent-foreground))'
-  			// },
-  			// destructive: {
-  			// 	DEFAULT: 'hsl(var(--destructive))',
-  			// 	foreground: 'hsl(var(--destructive-foreground))'
-  			// },
+  			text: '#f5f5f5'
   		}
   	}
   },

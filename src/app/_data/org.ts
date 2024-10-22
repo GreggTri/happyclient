@@ -5,15 +5,16 @@ import "server-only"
 import { verifySession } from "@/app/_lib/session";
 
 import { prisma } from "@/utils/prisma";
+import { cache } from "react";
 
-export const getRoles = async() => {
+export const getRoles = cache(async() => {
     //this function handles all verification/authorization
     const session = await verifySession(true)
     if (!session) return null;
 
     try{
         const getOrgRoles = await prisma.org.findUnique({where: {
-            id: String(session.tenantId!)
+            id: String(session.tenantId)
         }, select: {
             roles: true
         }})
@@ -33,5 +34,56 @@ export const getRoles = async() => {
             roles: [],
             error: "something went wrong trying to grab roles!"
         }
+    }
+})
+
+export const getOrgDomain = async() => {
+    //this function handles all verification/authorization
+    const session = await verifySession(true)
+    if (!session) return null;
+
+    try{
+        const getOrgDomain = await prisma.org.findUnique({
+            where: {
+                id: String(session.tenantId)
+            },
+            select: {
+                id: true,
+                domain: true
+            }
+        })
+
+        if (getOrgDomain === null){
+            return null;
+        }
+
+        return {success: true, org: getOrgDomain}
+
+    } catch(error){
+        console.log(error);
+
+        return null;
+    }
+}
+
+export const getOrgCompanyName = async() => {
+    //this function handles all verification/authorization
+    const session = await verifySession(true)
+    if (!session) return null;
+
+    try{
+        return await prisma.org.findUnique({
+            where: {
+                id: String(session.tenantId)
+            },
+            select: {
+                companyName: true
+            }
+        })
+
+    } catch(error){
+        console.log(error);
+
+        return null;
     }
 }

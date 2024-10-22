@@ -72,67 +72,68 @@ function RenameSurveyBtn({survey}: {survey: Survey}) {
             <span className="hover:bg-WHITE/20 hover:rounded-md p-1">Rename</span>
         </DialogTrigger>
         <DialogContent>
-        <DialogHeader>
-            <DialogTitle>Rename Survey</DialogTitle>
-            <DialogDescription className='text-WHITE/50'>
-                Rename your survey before collecting responses
-            </DialogDescription>
-        </DialogHeader>
+            <DialogHeader>
+                <DialogTitle>Rename Survey</DialogTitle>
+                <DialogDescription className='text-WHITE/50'>
+                    Rename your survey before collecting responses
+                </DialogDescription>
+            </DialogHeader>
 
-        <Form {...form}>
-            <form className="space-y-2">
-            <FormField
-                control={form.control}
-                name="id"
-                render={({field}) => (
-                <FormItem hidden>
-                    <FormLabel>
-                    </FormLabel>
-                    <FormControl>
-                        <Input {...field} defaultValue={survey.id}/>
-                    </FormControl>
-                </FormItem>
-                )}  
-            />
-            <FormField
-                control={form.control}
-                name="surveyTitle"
-                render={({field}) => (
-                <FormItem>
-                    <FormLabel>
-                        Title
-                    </FormLabel>
-                    <FormControl>
-                        <Input {...field} defaultValue={survey.surveyTitle}/>
-                    </FormControl>
-                </FormItem>
-                )}  
-            />
-            <FormField
-                control={form.control}
-                name="surveyDescription"
-                render={({field}) => (
-                <FormItem>
-                    <FormLabel>
-                        Description
-                    </FormLabel>
-                    <FormControl>
-                        <Textarea rows={5} {...field} defaultValue={survey.surveyDescription || ""}/>
-                    </FormControl>
-                </FormItem>
-                )}  
-            />
-            </form>
-        </Form>
-        <DialogFooter>
-            <Button
-            disabled={form.formState.isSubmitting} 
-            className="mt-4 bg-primary text-BLACK w-full"
-            onClick={form.handleSubmit(onSubmit)}
-            >
-            {form.formState.isSubmitting ? <Icons.spinner className='animate-spin' height={15} width={15}/> : "Rename"}
-            </Button>
-        </DialogFooter>
+            <Form {...form}>
+                <form className="space-y-2">
+                <FormField
+                    control={form.control}
+                    name="id"
+                    render={({field}) => (
+                    <FormItem hidden>
+                        <FormLabel>
+                        </FormLabel>
+                        <FormControl>
+                            <Input {...field} defaultValue={survey.id}/>
+                        </FormControl>
+                    </FormItem>
+                    )}  
+                />
+                <FormField
+                    control={form.control}
+                    name="surveyTitle"
+                    render={({field}) => (
+                    <FormItem>
+                        <FormLabel>
+                            Title
+                        </FormLabel>
+                        <FormControl>
+                            <Input {...field} defaultValue={survey.surveyTitle}/>
+                        </FormControl>
+                    </FormItem>
+                    )}  
+                />
+                <FormField
+                    control={form.control}
+                    name="surveyDescription"
+                    render={({field}) => (
+                    <FormItem>
+                        <FormLabel>
+                            Description
+                        </FormLabel>
+                        <FormControl>
+                            <Textarea rows={5} {...field} defaultValue={survey.surveyDescription || ""}/>
+                        </FormControl>
+                    </FormItem>
+                    )}  
+                />
+                </form>
+            
+                <DialogFooter>
+                    <Button
+                    disabled={form.formState.isSubmitting} 
+                    className="mt-4 bg-primary text-BLACK w-full"
+                    onClick={form.handleSubmit(onSubmit)}
+                    >
+                    {form.formState.isSubmitting ? <Icons.spinner className='animate-spin' height={15} width={15}/> : "Rename"}
+                    </Button>
+                </DialogFooter>
+            </Form>
         </DialogContent>
     </Dialog>
 )

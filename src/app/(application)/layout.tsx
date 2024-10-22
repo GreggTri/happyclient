@@ -1,7 +1,7 @@
 "use client"
 
 import AppNavBar from "../_components/appnavbar";
-import DesignerContextProvider from "./dashboard/forms/formComponents/context/DesignerContext";
+import DesignerContextProvider from "./dashboard/forms/_formComponents/context/DesignerContext";
 
 interface LayoutProps {
     children: React.ReactNode;

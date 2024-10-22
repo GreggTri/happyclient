@@ -34,7 +34,7 @@ export default function PricingPage() {
                     </li>
 
                     <li className="flex items-center hover:opacity-50 transition-opacity ease duration-300">
-                    <Icons.check className="mr-2 h-4 w-4" /> Custom domain
+                    <Icons.check className="mr-2 h-4 w-4" /> Scheduled Surveys
                     </li>
                     <li className="flex items-center hover:opacity-50 transition-opacity ease duration-300">
                     <Icons.check className="mr-2 h-4 w-4" /> Dashboard Analytics

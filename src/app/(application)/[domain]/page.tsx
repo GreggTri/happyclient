@@ -1,18 +1,24 @@
-// app/surveys/[id]/page.tsx
+'use server'
+
 import { getSurvey } from "@/app/_data/survey";
-import ClientSurvey from "../dashboard/forms/formComponents/ClientSurvey";
+import FormSubmitComponent from "./FormSubmitComponent";
 
 interface SurveyPageProps {
-  params: { id: string };
+  params: { token: string };
 }
 
 export default async function SurveyPage({ params }: SurveyPageProps) {
-  const surveyId = params.id;
-  const survey = await getSurveyContent(surveyId);
+  const token = params.token;
 
-  if (!survey || !survey.isPublished) {
+  if(!token) return 
+
+  const surveyContent = await getSurveyContentFromToken(token);
+
+  if (!surveyContent || !surveyContent.isPublished) {
     return <div>Survey not found or not available.</div>;
   }
 
-  return <ClientSurvey survey={survey} />;
+  return (
+    <FormSubmitComponent token={token} surveyContent={surveyContent}/>
+  );
 }

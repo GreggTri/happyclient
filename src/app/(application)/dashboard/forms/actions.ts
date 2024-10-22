@@ -141,7 +141,6 @@ export async function copySurvey(surveyId: string){
       surveyTitle: originalSurvey.surveyTitle + " Copy",
       surveyDescription: originalSurvey.surveyDescription,
       fields: originalSurvey.fields,
-      domain: originalSurvey.domain,
       backgroundColor: originalSurvey.backgroundColor,
       textColor: originalSurvey.textColor,
       primaryColor: originalSurvey.primaryColor

@@ -33,12 +33,12 @@ const SettingsNavBar = () => {
                 >
                     Team
                 </Link>
-                <Link 
+                {/* <Link 
                 href="/settings/integrations" 
                 className={`ml-3 p-1 ${isActive("/settings/integrations") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
                 >
                     Integrations
-                </Link>
+                </Link> */}
                 <Link 
                 href="/settings/emailBranding" 
                 className={`ml-3 p-1 ${isActive("/settings/emailBranding") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
