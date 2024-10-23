@@ -123,7 +123,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                     />
                   </FormControl>
                   <FormDescription className="text-WHITE/50">
-                    The label of the field. <br /> It will be displayed above the field.
+                    This will act as the displayed title of your survey inside the survey.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

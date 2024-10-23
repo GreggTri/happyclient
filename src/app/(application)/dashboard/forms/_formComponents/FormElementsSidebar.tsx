@@ -17,11 +17,16 @@ function FormElementsSidebar() {
           <SidebarBtnElement formElement={FormElements.TitleField}/>
           <SidebarBtnElement formElement={FormElements.SubtitleField}/>
           <SidebarBtnElement formElement={FormElements.SeparatorField}/>
+          <SidebarBtnElement formElement={FormElements.SpacerField}/>
           <span className='text-sm text-white/50 col-span-1 md:col-span-2 my-2 place-self-start'>
             Survey Elements
           </span>
 
           <SidebarBtnElement formElement={FormElements.TextField}/>
+          <SidebarBtnElement formElement={FormElements.NumberField}/>
+          <SidebarBtnElement formElement={FormElements.TextareaField}/>
+          <SidebarBtnElement formElement={FormElements.DateField}/>
+          <SidebarBtnElement formElement={FormElements.SelectField}/>
         </div>
         
     </div>

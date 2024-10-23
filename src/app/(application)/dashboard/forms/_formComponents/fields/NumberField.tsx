@@ -11,7 +11,7 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from "../FormElements"
-import { MdTextFields } from "react-icons/md";
+import { Bs123 } from "react-icons/bs";
 import { Input } from "@/app/_components/ui/input";
 import { z } from "zod";
 import { useForm } from 'react-hook-form'
@@ -21,16 +21,16 @@ import useDesigner from "../hooks/UseDesigner";
 import { Switch } from "@/app/_components/ui/switch";
 import { cn } from "@/lib/utils";
 
-const type: ElementsType = "TextField";
+const type: ElementsType = "NumberField";
 
 const extraAttributes = {
-    label: "Text field",
+    label: "Number field",
     helperText: "Helper text",
     required: false,
-    placeholder: "Value here..."
+    placeholder: "0"
 }
 
-export const TextFieldFormElement: FormElement = {
+export const NumberFieldFormElement: FormElement = {
     type,
     construct: (id: string) => ({
         id,
@@ -38,8 +38,8 @@ export const TextFieldFormElement: FormElement = {
         extraAttributes
     }),
     designerBtnElement: {
-        icon: MdTextFields,
-        label: "Text Field"
+        icon: Bs123,
+        label: "Number Field"
     },
     designerComponent: DesignerComponent,
     formComponent: FormComponent,
@@ -73,7 +73,7 @@ function DesignerComponent({
                 {label}
                 {required && "*"}
             </Label>
-            <Input readOnly disabled placeholder={placeholder} className="placeholder:text-WHITE/50 border"/>
+            <Input readOnly disabled type="number" placeholder={placeholder} className="placeholder:text-WHITE/50 border"/>
             {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p> }
         </div>
     );
@@ -210,7 +210,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                   <div className="space-y-0.5">
                     <FormLabel>Required</FormLabel>
                     <FormDescription className="text-WHITE/50">
-                        This forces the respondant to answer this question.
+                      This forces the respondant to answer this question.
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -250,10 +250,11 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
               {required && "*"}
           </Label>
           <Input 
+            type="number"
             onChange={(e) => setValue(e.target.value)}
             onBlur={(e) => {
               if (!submitValue) return;
-              const valid = TextFieldFormElement.validate(element, e.target.value)
+              const valid = NumberFieldFormElement.validate(element, e.target.value)
               setError(!valid)
               if(!valid) return;
 

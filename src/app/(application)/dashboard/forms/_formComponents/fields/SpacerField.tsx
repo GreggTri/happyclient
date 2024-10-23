@@ -11,18 +11,18 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { ElementsType, FormElement, FormElementInstance } from "../FormElements"
-import { LuHeading1 } from "react-icons/lu";
-import { Input } from "@/app/_components/ui/input";
+import { LuSeparatorHorizontal } from "react-icons/lu";
 import { z } from "zod";
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from "react";
 import useDesigner from "../hooks/UseDesigner"; 
+import { Slider } from "@/components/ui/slider";
 
 const type: ElementsType = "SpacerField";
 
 const extraAttributes = {
-  title: "Title field",
+  height: 20, //px
 }
 
 export const SpacerFieldFormElement: FormElement = {
@@ -33,8 +33,8 @@ export const SpacerFieldFormElement: FormElement = {
         extraAttributes
     }),
     designerBtnElement: {
-        icon: LuHeading1,
-        label: "Title Field"
+        icon: LuSeparatorHorizontal,
+        label: "Spacer Field"
     },
     designerComponent: DesignerComponent,
     formComponent: FormComponent,
@@ -54,17 +54,17 @@ function DesignerComponent({
 }) {
 
     const element = elementInstance as CustomInstance
-    const { title } = element.extraAttributes;
+    const { height } = element.extraAttributes;
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <Label className="text-white/50">Title Field</Label>
-            <p className="text-3xl">{title}</p>
+        <div className="flex flex-col gap-2 w-full items-center">
+            <Label className="text-white/50">Spacer Field: {height}px</Label>
+            <LuSeparatorHorizontal className="h-8 w-8"/>
         </div>
     );
 }
 
 const propertiesSchema = z.object({
-    title: z.string().min(2).max(150),
+    height: z.number().min(5).max(100),
 })
 
 type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
@@ -77,7 +77,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
         resolver: zodResolver(propertiesSchema),
         mode: "onBlur",
         defaultValues: {
-            title: element.extraAttributes.title
+            height: element.extraAttributes.title
         }
     })
 
@@ -88,11 +88,11 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 
     function applyChanges(values: propertiesFormSchemaType){
 
-        const { title} = values;
+        const { height} = values;
 
         updateElement(element.id, {
             ...element,
-            extraAttributes: {title}
+            extraAttributes: {height}
         })
     }
 
@@ -107,23 +107,24 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
         >
             <FormField
               control={form.control}
-              name="title"
+              name="height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input 
-                        {...field}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.currentTarget.blur();
-                            }
-                        }}
-                        className="border"
+                  <FormLabel>Height (px): {form.watch("height")}</FormLabel>
+                  <FormControl className="pt-2" >
+                    <Slider 
+                      value={[field.value]}
+                      min={5}
+                      max={100}
+                      step={1}
+                      onValueChange={(value) => {
+                        field.onChange(value[0])
+                      }}
+                      
                     />
                   </FormControl>
                   <FormDescription className="text-WHITE/50">
-                    The label of the field. <br /> It will be displayed above the field.
+                    Adds some extra spacing between different elements
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -139,9 +140,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 function FormComponent({elementInstance}: {elementInstance: FormElementInstance}){
 
   const element = elementInstance as CustomInstance
-  const { title } = element.extraAttributes;
+  const { height } = element.extraAttributes;
 
-  return (
-    <p className="text-3xl place-self-center">{title}</p>
-  );
+  return <div style={{height, width: "100%"}}></div>
 }

@@ -11,7 +11,7 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { ElementsType, FormElement, FormElementInstance, SubmitFunction } from "../FormElements"
-import { MdTextFields } from "react-icons/md";
+import { RxDropdownMenu } from "react-icons/rx";
 import { Input } from "@/app/_components/ui/input";
 import { z } from "zod";
 import { useForm } from 'react-hook-form'
@@ -20,17 +20,23 @@ import { useEffect, useState } from "react";
 import useDesigner from "../hooks/UseDesigner"; 
 import { Switch } from "@/app/_components/ui/switch";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { toast } from "@/hooks/use-toast";
 
-const type: ElementsType = "TextField";
+const type: ElementsType = "SelectField";
 
 const extraAttributes = {
-    label: "Text field",
+    label: "Select field",
     helperText: "Helper text",
     required: false,
-    placeholder: "Value here..."
+    options: []
 }
 
-export const TextFieldFormElement: FormElement = {
+export const SelectFieldFormElement: FormElement = {
     type,
     construct: (id: string) => ({
         id,
@@ -38,8 +44,8 @@ export const TextFieldFormElement: FormElement = {
         extraAttributes
     }),
     designerBtnElement: {
-        icon: MdTextFields,
-        label: "Text Field"
+        icon: RxDropdownMenu,
+        label: "Select Field"
     },
     designerComponent: DesignerComponent,
     formComponent: FormComponent,
@@ -66,14 +72,18 @@ function DesignerComponent({
 }) {
 
     const element = elementInstance as CustomInstance
-    const { label, required, placeholder, helperText } = element.extraAttributes;
+    const { label, required, helperText } = element.extraAttributes;
     return (
         <div className="flex flex-col gap-2 w-full">
             <Label>
                 {label}
                 {required && "*"}
             </Label>
-            <Input readOnly disabled placeholder={placeholder} className="placeholder:text-WHITE/50 border"/>
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select an answer..."/>
+              </SelectTrigger>
+            </Select>
             {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p> }
         </div>
     );
@@ -83,7 +93,7 @@ const propertiesSchema = z.object({
     label: z.string().min(2).max(150),
     helperText: z.string().max(250),
     required: z.boolean().default(false),
-    placeholder: z.string().max(50)
+    options: z.array(z.string()).default([])
 })
 
 type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
@@ -91,15 +101,15 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({elementInstance}: {elementInstance: FormElementInstance}){
 
     const element = elementInstance as CustomInstance;
-    const { updateElement } = useDesigner()
+    const { updateElement, setSelectedElement } = useDesigner()
     const form = useForm<propertiesFormSchemaType>({
         resolver: zodResolver(propertiesSchema),
-        mode: "onBlur",
+        mode: "onSubmit",
         defaultValues: {
             label: element.extraAttributes.label,
             helperText: element.extraAttributes.helperText,
             required: element.extraAttributes.required,
-            placeholder: element.extraAttributes.placeholder,
+            options: element.extraAttributes.options
         }
     })
 
@@ -110,22 +120,28 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 
     function applyChanges(values: propertiesFormSchemaType){
 
-        const { label, helperText, placeholder, required} = values;
+      const { label, helperText, required, options} = values;
 
-        updateElement(element.id, {
-            ...element,
-            extraAttributes: {label, helperText, placeholder, required}
-        })
+      updateElement(element.id, {
+          ...element,
+          extraAttributes: {label, helperText, required, options}
+      })
+
+      toast({
+        title: "Changes have been added!",
+        description: "Please save survey in order to keep these changes",
+        className: "bg-green-500 border-none text-lg"
+      })
+
+      setSelectedElement(null)
     }
 
     return (
+      <ScrollArea >
         <Form {...form}>
           <form
-            onBlur={form.handleSubmit(applyChanges)} 
+            onSubmit={form.handleSubmit(applyChanges)} 
             className="space-y-3"
-            onSubmit={(e) => {
-                e.preventDefault()
-            }}
         >
             <FormField
               control={form.control}
@@ -141,36 +157,11 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                                 e.currentTarget.blur();
                             }
                         }}
-                        className="border"
+                        className="border border-white/50"
                     />
                   </FormControl>
                   <FormDescription className="text-WHITE/50">
                     What question would you like your clients to answer?
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="placeholder"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Placeholder</FormLabel>
-                  <FormControl>
-                    <Input 
-                        {...field}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.currentTarget.blur();
-                            }
-                        }}
-                        className="border"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-WHITE/50">
-                    The placeholder of the field.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -191,7 +182,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                                 e.currentTarget.blur();
                             }
                         }}
-                        className="border"
+                        className="border border-white/50"
                     />
                   </FormControl>
                   <FormDescription className="text-WHITE/50">
@@ -201,12 +192,60 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                 </FormItem>
               )}
             />
+            <Separator className="bg-white/70"/>
+            <FormField
+              control={form.control}
+              name="options"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex justify-between items-center">
+                    <FormLabel>Options</FormLabel>
+                    <Button className="gap-2 text-black" onClick={(e) => {
+                      e.preventDefault()
+                      form.setValue("options", field.value.concat("New option"))
+                    }}>
+                      <AiOutlinePlus/>
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                      {form.watch("options").map((option, index) => (
+                        <div key={index} className="flex items-center justify-between gap-1 ">
+                          <Input
+                            className="border border-white/50"
+                            placeholder=""
+                            value={option}
+                            onChange={(e) => {
+                              field.value[index] = e.target.value
+                              field.onChange(field.value)
+                            }}
+                          />
+                          <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            onClick={e => {
+                              e.preventDefault();
+                              const newOptions = [...field.value]
+                              newOptions.splice(index, 1)
+                              field.onChange(newOptions)
+                            }}
+                          >
+                            <AiOutlineClose/>
+                          </Button>
 
+                        </div>
+                      ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Separator className="bg-white/70"/>
             <FormField
               control={form.control}
               name="required"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                <FormItem className="flex items-center justify-between rounded-lg border border-white/50 p-3 shadow-sm">
                   <div className="space-y-0.5">
                     <FormLabel>Required</FormLabel>
                     <FormDescription className="text-WHITE/50">
@@ -224,9 +263,14 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                 </FormItem>
               )}
             />
+            <Separator className="bg-white/70"/>
+
+            <Button className="w-full text-black shadow-md" type="submit">Complete Changes</Button>
           </form>
         </Form>
-      );
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
+    );
       
 }
 
@@ -234,7 +278,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: {elementInstance: FormElementInstance, submitValue?: SubmitFunction, isInvalid?: boolean, defaultValue?: string}){
     
   const element = elementInstance as CustomInstance
-  const { label, required, placeholder, helperText } = element.extraAttributes;
+  const { label, required, helperText, options } = element.extraAttributes;
   const [value, setValue] = useState(defaultValue || "")
   const [error, setError] = useState(false)
 
@@ -249,20 +293,32 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
               {label}
               {required && "*"}
           </Label>
-          <Input 
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={(e) => {
-              if (!submitValue) return;
-              const valid = TextFieldFormElement.validate(element, e.target.value)
+          <Select
+            defaultValue={value}
+            onValueChange={(value) => {
+              setValue(value)
+              if (!submitValue ) return;
+              const valid = SelectFieldFormElement.validate(element, value)
               setError(!valid)
-              if(!valid) return;
-
-              submitValue(element.id, e.target.value)
+              
+              submitValue(element.id, value)
             }}
-            value={value}
-            placeholder={placeholder}
-            className={cn(error && "border-red-500 placeholder:text-red-500", "placeholder:text-WHITE/50 border")}
-          />
+          >
+            <SelectTrigger 
+              className={cn("w-full",
+                error && "text-red-500"
+              )}
+            >
+              <SelectValue placeholder="Select an answer..."/>
+            </SelectTrigger>
+            <SelectContent>
+              {options.map(option => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {helperText && <p className={cn(error && "border-red-500 placeholder:text-red-500", "text-muted-foreground text-[0.8rem]")}>{helperText}</p> }
       </div>
   );
