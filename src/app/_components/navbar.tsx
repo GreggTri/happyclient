@@ -4,8 +4,8 @@
 import { useState } from 'react';
 import Link from "next/link";
 import { Icons } from "./icons";
-
-
+import Image from 'next/image'
+import logo from '../../../public/assets/logo.svg'
 
 const NavBar = () => {
 const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,8 +13,7 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <div className="flex flex-row w-screen py-2 px-[12%] fixed bg-background justify-between border-b border-WHITE/20 border-opacity-50 z-10">
       <Link href="/" className="flex flex-row justify-center gap-2">
-        <Icons.logo className="mx-auto h-6 w-6" />
-        <h1 className="text-primary font-bold text-base">Happy Client</h1>
+        <Image src={logo} width={100} alt="HappyClient Logo"/>
       </Link>
 
       {/* Hamburger Menu for Mobile */}

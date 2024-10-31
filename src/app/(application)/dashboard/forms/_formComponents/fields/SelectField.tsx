@@ -77,7 +77,7 @@ function DesignerComponent({
         <div className="flex flex-col gap-2 w-full">
             <Label>
                 {label}
-                {required && "*"}
+                {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
             </Label>
             <Select>
               <SelectTrigger className="w-full">
@@ -287,14 +287,16 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
 
   }, [isInvalid])
 
+  console.log(options);
+
   return (
       <div className="flex flex-col gap-2 w-full">
           <Label className={cn(error && "text-red-500")}>
               {label}
-              {required && "*"}
+              {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
           </Label>
           <Select
-            defaultValue={value}
+            value={value}
             onValueChange={(value) => {
               setValue(value)
               if (!submitValue ) return;
@@ -311,9 +313,11 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
             >
               <SelectValue placeholder="Select an answer..."/>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent style={{ zIndex: 50 }} className=" bg-black rounded-md border-WHITE/50">
               {options.map(option => (
-                <SelectItem key={option} value={option}>
+                <SelectItem 
+                  key={option} 
+                  value={option}>
                   {option}
                 </SelectItem>
               ))}

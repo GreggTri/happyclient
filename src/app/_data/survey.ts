@@ -116,6 +116,9 @@ export const getSurveyDetails = cache(async(surveyId: string) => {
                         {surveyState: 'ARCHIVED'},
                         {surveyState: 'PUBLISHED'}
                     ]
+                },
+                include: {
+                    SurveySendGroup: true
                 }
             })
             

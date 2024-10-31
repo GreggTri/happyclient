@@ -30,6 +30,7 @@ const extraAttributes = {
   helperText: "Helper text",
   required: false,
   placeholder: "Value here...",
+  sentimentAnalysis: false,
   rows: 3
 }
 
@@ -74,7 +75,7 @@ function DesignerComponent({
         <div className="flex flex-col gap-2 w-full">
             <Label>
                 {label}
-                {required && "*"}
+                {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
             </Label>
             <Textarea readOnly disabled placeholder={placeholder} className="placeholder:text-WHITE/50 border"/>
             {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p> }
@@ -86,6 +87,7 @@ const propertiesSchema = z.object({
     label: z.string().min(2).max(150),
     helperText: z.string().max(250),
     required: z.boolean().default(false),
+    sentimentAnalysis: z.boolean().default(false),
     placeholder: z.string().max(50),
     rows: z.number().min(1).max(10)
 })
@@ -103,6 +105,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
             label: element.extraAttributes.label,
             helperText: element.extraAttributes.helperText,
             required: element.extraAttributes.required,
+            sentimentAnalysis: element.extraAttributes.sentimentAnalysis,
             placeholder: element.extraAttributes.placeholder,
             rows: element.extraAttributes.rows
         }
@@ -115,11 +118,11 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 
     function applyChanges(values: propertiesFormSchemaType){
 
-        const { label, helperText, placeholder, required, rows} = values;
+        const { label, helperText, placeholder, required, sentimentAnalysis, rows} = values;
 
         updateElement(element.id, {
             ...element,
-            extraAttributes: {label, helperText, placeholder, required, rows}
+            extraAttributes: {label, helperText, placeholder, required, sentimentAnalysis, rows}
         })
     }
 
@@ -252,6 +255,28 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="sentimentAnalysis"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Sentiment Analysis</FormLabel>
+                    <FormDescription className="text-WHITE/50">
+                        Check to see if the response to this question was [positive, negative, neutral]
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch 
+                        checked={field.value} 
+                        onCheckedChange={field.onChange} 
+                    />
+                  </FormControl>
+                  
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </form>
         </Form>
       );
@@ -275,7 +300,7 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
       <div className="flex flex-col gap-2 w-full">
           <Label className={cn(error && "text-red-500")}>
               {label}
-              {required && "*"}
+              {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
           </Label>
           <Textarea
             rows={rows} 

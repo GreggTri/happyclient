@@ -4,6 +4,8 @@ import { Icons } from "./icons";
 import { useState } from 'react';
 import { usePathname } from "next/navigation";
 import { logout } from "../(auth)/login/actions";
+import Image from 'next/image'
+import logo from '../../../public/assets/logo.svg'
 
 const AppNavBar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,15 +26,14 @@ const AppNavBar = () => {
 
             {/* Logo and Title */}
             <div className="flex items-center gap-2">
-                <Icons.logo className="h-6 w-6" />
-                <h1 className="text-primary font-bold text-base">Happy Client</h1>
+                <Image src={logo} width={100} alt="HappyClient Logo"/>
             </div>
 
             {/* Horizontal Navigation (for large screens only) */}
             <div className="hidden lg:flex gap-7">
                 <Link 
                     href="/dashboard" 
-                    className={`${isActive("/dashboard") ? 'border-b border-WHITE' : 'hover:bg-WHITE/20 hover:px-1 hover:py-0 hover:rounded-md'} px-1`} 
+                    className={`${isActive("/dashboard") ? 'border-b border-WHITE' : 'hover:bg-WHITE/20 hover:px-1 hover:rounded-md'} px-1`} 
                 >
                     Dashboard
                 </Link>

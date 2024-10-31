@@ -4,6 +4,8 @@ import "server-only"
 import { prisma } from "@/utils/prisma";
 import { cache } from 'react'
 import { verifySession } from "../_lib/session";
+import { AttachedUsers } from '@prisma/client';
+
 
 export const fetchUser = cache(async () => {
 
@@ -148,4 +150,64 @@ export const fetchUsers = cache(async (q: string, page: number) => {
             message: "Failed to fetch users!"
         }
     }   
+})
+
+export async function getAttachedUsers(users: AttachedUsers[]){
+    try{
+        const session = await verifySession(true)
+
+        if (!session || session.isAuth === false) return null;
+
+        const getGroupedUsers = await prisma.user.findMany({
+            where: {
+                tenantId: String(session.tenantId),
+                AND: {
+                    id: {
+                        in: users.map((user) => user.userId)
+                    }
+                }
+            },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                password: false
+            }
+        })
+
+        if(!getGroupedUsers) return null;
+
+        return getGroupedUsers
+    } catch(error){
+        console.log(error);
+    }
+
+    
+}
+
+export const getUsers = cache(async() => {
+    try{
+        const session = await verifySession(true)
+
+        if (!session || session.isAuth === false) return null;
+
+        const getGroupedUsers = await prisma.user.findMany({
+            where: {
+                tenantId: String(session.tenantId),
+            },
+            select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                password: false
+            }
+        })
+
+        if(!getGroupedUsers) return null;
+
+        return getGroupedUsers
+    } catch(error){
+        console.log(error);
+    }
 })

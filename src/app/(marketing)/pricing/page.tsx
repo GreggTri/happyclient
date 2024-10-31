@@ -50,7 +50,7 @@ export default function PricingPage() {
                 </div>
                 <div className="flex flex-col gap-4 text-center">
                     <div className="cursor-default">
-                        <h4 className="text-7xl font-bold">$99</h4>
+                        <h4 className="text-7xl font-bold">$149</h4>
                         <p className="text-sm font-medium text-muted-foreground">
                         Billed Monthly
                         </p>

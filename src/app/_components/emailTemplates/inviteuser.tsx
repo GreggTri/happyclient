@@ -141,7 +141,7 @@ import {
     );
   };
   
-  VercelInviteUserEmail.PreviewProps = {
+  InviteUserEmail.PreviewProps = {
     username: "alanturing",
     userImage: `${baseUrl}/static/vercel-user.png`,
     invitedByUsername: "Alan",

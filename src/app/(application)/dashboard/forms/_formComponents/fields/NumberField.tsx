@@ -71,7 +71,7 @@ function DesignerComponent({
         <div className="flex flex-col gap-2 w-full">
             <Label>
                 {label}
-                {required && "*"}
+                {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
             </Label>
             <Input readOnly disabled type="number" placeholder={placeholder} className="placeholder:text-WHITE/50 border"/>
             {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p> }
@@ -247,7 +247,7 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
       <div className="flex flex-col gap-2 w-full">
           <Label className={cn(error && "text-red-500")}>
               {label}
-              {required && "*"}
+              {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
           </Label>
           <Input 
             type="number"

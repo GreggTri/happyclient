@@ -75,7 +75,7 @@ function DesignerComponent({
         <div className="flex flex-col gap-2 w-full">
             <Label>
                 {label}
-                {required && "*"}
+                {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
             </Label>
             <Button variant={"outline"} className="w-full justify-start text-left">
               <CalendarIcon className="mr-2 h-4 w-6"/>
@@ -219,6 +219,7 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
     defaultValue ? new Date(defaultValue) : undefined
   )
   const [error, setError] = useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false); // New state to control popover open
 
   useEffect(() => {
     setError(isInvalid == true);
@@ -229,9 +230,9 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
       <div className="flex flex-col gap-2 w-full">
           <Label className={cn(error && "text-red-500")}>
               {label}
-              {required && "*"}
+              {required && <span className="text-white/50 px-2 text-xs">(Required)</span>}
           </Label>
-          <Popover>
+          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
               <Button 
                   variant={"outline"} 
@@ -245,22 +246,28 @@ function FormComponent({elementInstance, submitValue, isInvalid, defaultValue}: 
                   {date ? format(date, "PPP") : <span>Choose a date</span>}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent 
+              className="w-auto p-0" 
+              align="start" 
+            >
               <Calendar
                 mode="single"
+                
                 className='bg-black rounded-md'
                 selected={date}
-                onSelect={(date) => {
-                  setDate(date); // Update local state for UI
-
+                onSelect={(selectedDate) => {
+                  setDate(selectedDate); // Update local state for UI
+                  console.log(selectedDate);
                   if (!submitValue) return;
 
-                  const value = date?.toUTCString() || "";
+                  const value = selectedDate?.toUTCString() || "";
 
                   const valid = DateFieldFormElement.validate(element, value)
                   setError(!valid)
                   
                   submitValue(element.id, value)
+                  // Close popover after selection
+                  setIsPopoverOpen(false);
 
                 }}
                 initialFocus

@@ -42,6 +42,8 @@ type Field = {
     placeholder: string;
     helperText: string;
     required: boolean;
+    sentimentAnalysis: boolean;
+    rows: number;
   };
 };
 
@@ -68,6 +70,8 @@ export async function saveSurvey(id: string, jsonContent: string) {
           helperText: field.extraAttributes.helperText,
           options: [], // You can map options here if needed
           required: field.extraAttributes.required,
+          sentimentAnalysis: field.extraAttributes.sentimentAnalysis,
+          rows: field.extraAttributes.rows,
           position: index
         }))
       }

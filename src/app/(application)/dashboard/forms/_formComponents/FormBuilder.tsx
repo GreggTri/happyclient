@@ -51,9 +51,9 @@ function FormBuilder({ survey }: {survey: Survey}){
         <DndContext sensors={sensors}>
             <div className="flex flex-col h-[calc(100vh-50px)]">
                 <nav className="flex flex-row border-b border-WHITE/20 shadow-md py-3 px-12 justify-between">
-                    <div className="flex flex-row gap-2 m-2 justify-center items-center">
-                        <span className="text-WHITE/70">Survey: </span>
-                        <input className="text-WHITE px-2 rounded-md bg-WHITE/10" placeholder="Title..." type="text" defaultValue={survey.surveyTitle} readOnly />
+                    <div className="flex flex-row gap-2 m-1 justify-center items-center">
+                        <span className="text-WHITE/70 text-sm">Survey:</span>
+                        <input className="text-WHITE bg-transparent rounded-md text-lg" placeholder="Title..." type="text" defaultValue={survey.surveyTitle} readOnly />
                     </div>
 
                     <div className="flex flex-row gap-5">
