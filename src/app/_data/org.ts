@@ -87,3 +87,28 @@ export const getOrgCompanyName = async() => {
         return null;
     }
 }
+
+export const getOrg = async() => {
+    //this function handles all verification/authorization
+    const session = await verifySession(true)
+    if (!session) return null;
+
+    try{
+        return await prisma.org.findUnique({
+            where: {
+                id: String(session.tenantId)
+            },
+            select: {
+                id: true,
+                companyName: true,
+                surveyEmail: true,
+                resendDomainId: true,
+            }
+        })
+
+    } catch(error){
+        console.log(error);
+
+        return null;
+    }
+}

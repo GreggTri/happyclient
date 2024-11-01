@@ -76,8 +76,10 @@ export async function GET(request: NextRequest){
                     }
 
                     //send email to client with template using org's email/domain stuff
+
+                    //TODO:: MAKE THIS A BATCH REQUEST for the entire org.
                     const { data, error } = await resend.emails.send({
-                        from: 'Acme <onboarding@resend.dev>',
+                        from:`${org.companyName} <${org.surveyEmail}>`,
                         to: [`${client.email}`],
                         subject: `${org.companyName} would like you to fill out their survey!`,
                         react: FormLinkTemplate({ firstName: 'John' }),

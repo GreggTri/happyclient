@@ -19,7 +19,7 @@ const SettingsNavBar = () => {
                     href="/settings/profile" 
                     className={`ml-3 p-1 ${isActive("/settings/profile") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
                 >
-                    Profile
+                    Your Profile
                 </Link>
             </div>
         </div>
@@ -31,7 +31,7 @@ const SettingsNavBar = () => {
                     href="/settings/team" 
                     className={`ml-3 p-1 ${isActive("/settings/team") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
                 >
-                    Team
+                    Manage Team
                 </Link>
                 {/* <Link 
                 href="/settings/integrations" 
@@ -43,13 +43,13 @@ const SettingsNavBar = () => {
                 href="/settings/emailBranding" 
                 className={`ml-3 p-1 ${isActive("/settings/emailBranding") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
                 >
-                    Email Branding
+                    Email Sending Setup
                 </Link>
                 <Link 
                 href="/settings/customDomain" 
                 className={`ml-3 p-1 ${isActive("/settings/customDomain") ? 'bg-WHITE/10 p-1 rounded-md' : 'hover:bg-WHITE/10 hover:p-1 hover:rounded-md'}`}
                 >
-                    Custom Domain
+                    Survey Custom Domain
                 </Link>
                 
                 

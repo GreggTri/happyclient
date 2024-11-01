@@ -54,6 +54,7 @@ model Org {
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
   resendDomainId         String?
+  surveyEmail            String?  
   updatedAt              DateTime  @updatedAt
   createdAt              DateTime  @default(now())
 
