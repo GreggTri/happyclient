@@ -23,7 +23,7 @@ const TeamSettingsPage = async ({ searchParams }: {searchParams: any}) => {
   const {success, count, users} = await fetchUsers(q, page);
   
   return (
-    <div className="flex flex-col px-3 space-y-2">
+    <div className="flex flex-col space-y-2 w-full border-l-2 border-gray-500 px-4">
       <h1 className="font-bold">Team</h1>
       
       <div className="rounded-lg  bg-BLACK p-5 mt-5">

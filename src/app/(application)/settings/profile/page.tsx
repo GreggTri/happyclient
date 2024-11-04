@@ -9,7 +9,7 @@ const ProfileSettingsPage = async () => {
   const result = await fetchUser()
   
   return (
-    <div className="flex flex-col px-3 space-y-2">
+    <div className="flex flex-col space-y-2 border-l-2 border-gray-500 px-4">
       <h1 className="font-bold">Profile Settings</h1>
       
       <UpdateProfileForm user={result?.user}/>

@@ -17,7 +17,7 @@ async function OrgAccountSettingsPage(){
   if(!org) return redirect('/settings/profile');
   
   return (
-    <div className="flex flex-col w-full px-2">
+    <div className="flex flex-col w-full border-l-2 border-gray-500 px-4">
       <div>
         <h1 className="font-bold text-lg my-4">Organizations Account & Billing</h1>
         

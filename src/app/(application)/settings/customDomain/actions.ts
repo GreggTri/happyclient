@@ -1,61 +1,100 @@
 "use server"
 
+import { addDomainToVercel, verifyDomainOnVercel } from "@/app/_data/vercel";
 import { verifySession } from "@/app/_lib/session";
+import { prisma } from "@/utils/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import fetch from 'node-fetch';
+import { z } from "zod";
 
 //const subdomainRegex = /^[a-zA-Z0-9-]+$/;
 
-const VERCEL_API_URL = 'https://api.vercel.com';
-const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
-const VERCEL_TOKEN = process.env.VERCEL_API_TOKEN;
+
+
+const domainFormSchema = z.object({
+    domain: z
+    .string()
+    .regex(
+      /^(?=.{4,253}$)(([a-zA-Z0-9][-a-zA-Z0-9]{0,62})\.)+([a-zA-Z]{2,63})$/,
+      'Invalid domain format'
+    )
+    .refine(
+      (val) => val.split('.').length >= 3,
+      'Domain must include a subdomain (e.g., subdomain.domain.com)'
+    ),
+})
+  
+type domainSchemaType = z.infer<typeof domainFormSchema>
 
 // Function to add a domain (either a subdomain of your main domain or an entire custom domain)
-export async function addDomain(subdomain: string, domain?: string) {
+export async function upsertCustomDomain(formData: domainSchemaType) {
     const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
-    if (!session) return new Error("Unauthorized");
+    if (!session) return redirect('/dashboard/analytics');
     
-    try {
-        let fullDomain = '';
+    const { domain } = formData
 
-        const baseDomain = process.env.BASE_DOMAIN
+    
+    const dnsRecords = await addDomainToVercel(domain);
 
-        // Scenario 1: Subdomain of your main domain (e.g., subdomain.gethappyclient.com)
-        if (!domain) {
-        fullDomain = `${subdomain}.${baseDomain}`;
-        } 
-        // Scenario 2: Custom domain with subdomain (e.g., subdomain.customerdomain.com)
-        else if (domain && subdomain) {
-        fullDomain = `${subdomain}.${domain}`;
-        } 
-        // Scenario 3: Custom domain without subdomain (e.g., customerdomain.com)
-        else if (domain && !subdomain) {
-        fullDomain = domain;
-        }
-
-        // Call the Vercel API to add the domain (subdomain or custom domain)
-        const response = await fetch(`${VERCEL_API_URL}/v9/projects/${VERCEL_PROJECT_ID}/domains`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${VERCEL_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            name: fullDomain, 
-        }),
+    if(!dnsRecords){
+        console.log({
+            'message': "DNS Records came back null",
+            'dnsRecords': dnsRecords,
+            'domain': domain
         });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-        throw new Error(`Failed to add domain: `);
-        }
-
-        return result;
-    } catch (error) {
-        console.error('Error adding domain:', error);
-        throw error;
     }
+
+    const updateOrg = await prisma.org.update({
+        where: {
+            id: String(session.tenantId)
+        },
+        data: {
+            domain: {
+                set: domain
+            },
+            domainVerified: {
+                set: dnsRecords.verified
+            }
+        }
+    })
+
+    if(!updateOrg){
+        console.log({
+            'updateOrg': updateOrg,
+            'resendData': dnsRecords,
+            'message': 'was not able to update org!'
+        });
+        throw new Error('could not update org with survey domain')
+    }
+
+    console.log(dnsRecords);
+
+    return dnsRecords;
+    
+}
+
+export async function verifyVercelDomain(domain: string){
+    const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
+    if (!session) return redirect('/dashboard/analytics');
+
+    const vercelResponse = await verifyDomainOnVercel(domain)
+
+    if (vercelResponse!.verified) {
+        
+        const updateOrg = await prisma.org.update({
+            where: {
+                id: String(session.tenantId)
+            },
+            data: {
+                domainVerified: true
+            }
+        })
+    }
+
+    revalidatePath('/settings/customDomain')
+
+    return null;
 }
 
   

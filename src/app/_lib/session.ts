@@ -50,7 +50,7 @@ async function authorizeSession(session: JWTPayload | null, adminOnly: boolean){
         success: false,
         message: "Unauthorized"
     };
-    if (adminOnly && session.isAdmin === false)return {
+    if (adminOnly && session.isAdmin === false) return {
         success: false,
         message: "Unauthorized"
     };

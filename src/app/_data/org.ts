@@ -49,7 +49,8 @@ export const getOrgDomain = async() => {
             },
             select: {
                 id: true,
-                domain: true
+                domain: true,
+                domainVerified: true
             }
         })
 
@@ -57,7 +58,7 @@ export const getOrgDomain = async() => {
             return null;
         }
 
-        return {success: true, org: getOrgDomain}
+        return getOrgDomain
 
     } catch(error){
         console.log(error);
