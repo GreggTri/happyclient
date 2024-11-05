@@ -5,7 +5,6 @@ import { verifySession } from "@/app/_lib/session";
 import { prisma } from "@/utils/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import fetch from 'node-fetch';
 import { z } from "zod";
 
 //const subdomainRegex = /^[a-zA-Z0-9-]+$/;
@@ -74,13 +73,28 @@ export async function upsertCustomDomain(formData: domainSchemaType) {
     
 }
 
+
+interface VercelResponse {
+    verified: boolean;
+    // add any other expected properties here
+}
+
 export async function verifyVercelDomain(domain: string){
     const session = await verifySession(true) //false means user does not need to be admin to hit endpoint
     if (!session) return redirect('/dashboard/analytics');
 
-    const vercelResponse = await verifyDomainOnVercel(domain)
+    const vercelResponse = await verifyDomainOnVercel(domain) as VercelResponse;
 
-    if (vercelResponse!.verified) {
+    if(!vercelResponse){
+        console.log({
+            'domain': domain,
+            'tenantId': session.tenantId,
+            'vercelResponse': vercelResponse
+        });
+        throw new Error('no vercel response')
+    }
+
+    if (vercelResponse.verified) {
         
         const updateOrg = await prisma.org.update({
             where: {
@@ -90,6 +104,15 @@ export async function verifyVercelDomain(domain: string){
                 domainVerified: true
             }
         })
+
+        if(!updateOrg){
+            console.log({
+                'updateOrg': updateOrg,
+                'vercelResponse': vercelResponse,
+                'message': 'was not able to update org with verification!'
+            });
+            throw new Error('could not update org with verification for survey domain')
+        }
     }
 
     revalidatePath('/settings/customDomain')

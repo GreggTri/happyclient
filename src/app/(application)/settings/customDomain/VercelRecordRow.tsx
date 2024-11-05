@@ -4,7 +4,6 @@ import { Icons } from '@/app/_components/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { cn } from '@/lib/utils'
 import React, { useState } from 'react'
 
 function RecordRow({record}: {record: {

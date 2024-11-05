@@ -1,23 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import useDesigner from "./hooks/UseDesigner";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button";
 import { MdPreview } from "react-icons/md";
 import { FormElements } from "./FormElements";
 
-interface PreviewDialogBtnProps {
-  backgroundColor: string;
-  textColor: string;
-  primaryColor: string;
-}
+// interface PreviewDialogBtnProps {
+//   backgroundColor: string;
+//   textColor: string;
+//   primaryColor: string;
+// }
 
-function PreviewDialogBtn({
-  backgroundColor,
-  textColor,
-  primaryColor,
-}: PreviewDialogBtnProps) {
+function PreviewDialogBtn() {
 
   const { elements } = useDesigner()
 

@@ -8,6 +8,30 @@ const VERCEL_API_URL = 'https://api.vercel.com';
 const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
 const VERCEL_TOKEN = process.env.VERCEL_HP_API_KEY;
 
+interface Error {
+  message: string;
+}
+
+interface VercelDomainResponse {
+  apexName: string; // Required
+  createdAt: number;
+  customEnvironmentId: string | null;
+  gitBranch: string | null;
+  name: string; // Required
+  projectId: string; // Required
+  redirect: string | null;
+  redirectStatusCode: 307 | 301 | 302 | 308 | null;
+  updatedAt: number;
+  verified: boolean;
+  verification: Array<{
+    type: string;
+    domain: string;
+    value: string;
+    reason: string
+  }>;
+  error: Error
+}
+
 export async function addDomainToVercel(domain: string) {
   const response = await fetch(`${VERCEL_API_URL}/v10/projects/${VERCEL_PROJECT_ID}/domains`, {
     method: 'POST',
@@ -18,7 +42,7 @@ export async function addDomainToVercel(domain: string) {
     body: JSON.stringify({ name: domain }),
   });
 
-  const data = await response.json();
+  const data = await response.json() as VercelDomainResponse;
 
   console.log(data);
 
@@ -45,7 +69,7 @@ export const getDomainFromVercel = cache(async(domain: string) => {
         }
     });
 
-    const data = await response.json();
+    const data  = await response.json() as VercelDomainResponse;
 
     console.log(data);
 
@@ -74,11 +98,14 @@ export async function verifyDomainOnVercel(domain: string) {
     },
   });
 
-  const data = await response.json();
+  const data = await response.json() as VercelDomainResponse;
 
   if (!response.ok) {
     throw new Error(data.error?.message || 'Unknown error during domain verification.');
   }
 
-  return data;
+  return {
+    'name': data.name,
+    'verified': data.verified
+  };
 }

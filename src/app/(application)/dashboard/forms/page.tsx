@@ -27,10 +27,14 @@ interface Survey {
   createdAt: Date
 }
 
+interface SearchParams {
+  q?: string;
+  page?: string;
+}
 
-const FormsPage = async ({ searchParams }: {searchParams: any}) => {
+const FormsPage = async ({ searchParams }: {searchParams: SearchParams}) => {
     const q = searchParams?.q || "";
-    const page: number = searchParams?.page || 1;
+    const page: number = Number(searchParams?.page || 1);
     const orgSurveyData = await getOrgSurveys(q, page)
 
     console.log(orgSurveyData);

@@ -1,7 +1,7 @@
 'use server'
 
 import 'server-only'
-import { addMonths, endOfMonth, setDate, getDaysInMonth } from 'date-fns';
+import { addMonths, setDate, getDaysInMonth } from 'date-fns';
 
 export function getNextMonthDate(selectedDate: Date) {
   const nextMonthDate = addMonths(selectedDate, 1);

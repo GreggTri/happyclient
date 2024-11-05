@@ -1,13 +1,17 @@
 'use client'
 
 
-import { Icons } from '@/app/_components/icons'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Pencil } from 'lucide-react';
-import React, { useState } from 'react'
+import React from 'react'
 
-function SurveyAnalyticsComponent({surveyData}: { surveyData: any}) {
+interface SurveyData {
+
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function SurveyAnalyticsComponent({surveyData}: { surveyData: SurveyData}) {
   // const [selectedTab, setTab] = useState("Org");
 
   const handleEdit = () => {

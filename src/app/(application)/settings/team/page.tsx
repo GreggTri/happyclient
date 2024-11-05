@@ -19,7 +19,7 @@ interface user {
 interface SearchParams {
     q?: string;
     page?: string;
-  }
+}
 
 const TeamSettingsPage = async ({ searchParams }: {searchParams: SearchParams}) => {
   const q = searchParams?.q || "";
