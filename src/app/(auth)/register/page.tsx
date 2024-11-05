@@ -139,7 +139,7 @@ export default function RegisterPage() {
   )
 }
 
-export function RegisterButton() {
+function RegisterButton() {
   const { pending } = useFormStatus();
 
   return (

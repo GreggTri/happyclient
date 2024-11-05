@@ -82,7 +82,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   )
 }
 
-export function LoginButton() {
+function LoginButton() {
   
   const { pending } = useFormStatus();
 
