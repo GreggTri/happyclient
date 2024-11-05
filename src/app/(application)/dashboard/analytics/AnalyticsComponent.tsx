@@ -17,7 +17,7 @@ function AnalyticsComponent({surveys }: {surveys:{
         if (selectedSurvey) {
             // Fetch the survey data when the selectedSurvey changes
             const fetchSurveyData = async () => {
-                const res = await fetch(`/api/surveys/${selectedSurvey}`, {
+                const res = await fetch(`/api/surveyanalytics/${selectedSurvey}`, {
                     headers: {
                         Accept: "application/json",
                         method: "GET"

@@ -16,10 +16,14 @@ interface user {
   role: string
   isAdmin: boolean
 }
+interface SearchParams {
+    q?: string;
+    page?: string;
+  }
 
-const TeamSettingsPage = async ({ searchParams }: {searchParams: any}) => {
+const TeamSettingsPage = async ({ searchParams }: {searchParams: SearchParams}) => {
   const q = searchParams?.q || "";
-  const page: number = searchParams?.page || 1;
+  const page: number = Number(searchParams?.page || 1);
   const {success, count, users} = await fetchUsers(q, page);
   
   return (

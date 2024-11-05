@@ -10,7 +10,7 @@ interface User {
     firstName?: string | null | undefined
     lastName?: string | null | undefined
     role?: string | null | undefined
-    isAdmin?: Boolean | null | undefined
+    isAdmin?: boolean | null | undefined
     
 }
 

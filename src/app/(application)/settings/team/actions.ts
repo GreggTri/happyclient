@@ -47,10 +47,10 @@ export const sendUserInvite = async(formData: FormData) => {
     const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
     const emailResponse = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
+        from: 'HappyClient <onboarding@gethappyclient.com>',
         to: [newUserEmail],
-        subject: `Invite to Happy Client from ${getUser.firstName} ${getUser.lastName} at ${getOrg.companyName}`,
-        html: "<InviteUserEmail/>", // figure this out still and add info props some how.
+        subject: `${getUser.firstName} ${getUser.lastName} invited you to Happy Client for ${getOrg.companyName}`,
+        react: InviteUserEmail({}), // figure this out still and add info props some how.
       });
 
     if (!emailResponse){
