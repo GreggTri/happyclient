@@ -2,5 +2,5 @@
 
 
 export async function submitSurveyData(token: string, jsonContent: string){
-    return;
+    return {token, jsonContent};
 }

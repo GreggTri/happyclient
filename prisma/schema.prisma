@@ -96,7 +96,6 @@ model Survey {
   backgroundColor   String  @default("#ffffff")
   textColor         String  @default("#000000")
   primaryColor      String  @default("#F4E300")
-
   fields    Fields[]
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())

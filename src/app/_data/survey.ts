@@ -163,3 +163,68 @@ export const getAllSurveys = cache(async() => {
         throw new Error('Could not get list of surveys')
     }
 })
+
+
+export const getSurveyContentFromToken = async(token: string) => {
+
+    try{
+        const getSurveyData = await prisma.surveyData.findUnique({
+            where: {
+                token: token
+            }
+        })
+
+        if(!getSurveyData){
+            console.log({
+                'token': token,
+                'message': "could not grab surveyData from token. prisma result was empty."
+            });
+
+            throw new Error('could not grab surveyData from token. prisma result was empty.')
+        }
+
+        //TODO:: CREATE CHECK FOR EXPERATION DATE and fail if expired
+
+        //TODO:: update SurveyData to true for opening survey
+
+        const getSurveyQuestions = await prisma.survey.findUnique({
+            where: {
+                id: getSurveyData?.surveyId,
+                tenantId: getSurveyData?.tenantId
+            },
+            select: {
+                id: true,
+                tenantId: true,
+                surveyTitle: true,
+                surveyDescription: true,
+                surveyState: true,
+                fields: true
+            }
+        })
+
+        if(!getSurveyQuestions){
+            console.log({
+                'userSurveyData': getSurveyData,
+                'message': "could not grab survey from userSurveyData. prisma result was empty."
+            });
+
+            throw new Error('could not grab survey from userSurveyData. prisma result was empty.')
+        }
+
+        return {
+            'surveyId': getSurveyQuestions.id,
+            'tenantId': getSurveyQuestions.tenantId,
+            'surveyTitle': getSurveyQuestions.surveyTitle,
+            'surveyDescription': getSurveyQuestions.surveyDescription,
+            'token': token,
+            'surveyDataId': getSurveyData.id,
+            'surveyState': getSurveyQuestions.surveyState,
+            'surveyFields': getSurveyQuestions.fields
+        }
+
+    } catch(error){
+        console.log(error);
+
+        throw new Error('Could not get surveyData')
+    }
+}
