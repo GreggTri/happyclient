@@ -6,12 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Pencil } from 'lucide-react';
 import React from 'react'
 
-interface SurveyData {
+// interface SurveyData {
 
-}
+// }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function SurveyAnalyticsComponent({surveyData}: { surveyData: SurveyData}) {
+function SurveyAnalyticsComponent({surveyData}: { surveyData: null}) {
   // const [selectedTab, setTab] = useState("Org");
 
   const handleEdit = () => {
