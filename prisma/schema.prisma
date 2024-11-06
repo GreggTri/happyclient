@@ -45,7 +45,7 @@ model Org {
   id                     String    @id @default(auto()) @map("_id") @db.ObjectId
   companyName            String    @unique
   domainVerified         Boolean   @default(false)
-  domain                 String
+  domain                 String?
   address                Address?
   invites                Invites[]
   roles                  Roles[]

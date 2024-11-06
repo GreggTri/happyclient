@@ -12,50 +12,19 @@ export async function updateCompanyName(companyName: string){
     console.log(companyName);
     try{   
 
-        const getOrgDomain = await prisma.org.findUnique({
-            where:{ 
+        return await prisma.org.update({
+            where: {
                 id: String(session.tenantId)
-            }, 
+            },
+            data: {
+                companyName: companyName
+            },
             select: {
-                id: true, 
-                domain: true, 
-                isUsingCustomDomain: true
+                id: true,
+                companyName: true
             }
         })
 
-        if(!getOrgDomain) return null
-
-        if(getOrgDomain.isUsingCustomDomain){
-            // since using a custom domain we do not want to update the domain.
-            return await prisma.org.update({
-                where: {
-                    id: String(session.tenantId)
-                },
-                data: {
-                    companyName: companyName
-                },
-                select: {
-                    companyName: true
-                }
-            })
-        } else {
-            //we want to use new companyName for the subdomain.
-            const modifiedCompanyNameForSubDomain = companyName
-            .replace(/&/g, 'and')              // Replace & with "and"
-            .replace(/[^a-zA-Z0-9-]/g, '')     // Remove all other disallowed characters
-            .toLowerCase();    
-            
-            console.log(modifiedCompanyNameForSubDomain);
-            return await prisma.org.update({
-                where: {
-                    id: String(session.tenantId)
-                },
-                data: {
-                    companyName: companyName,
-                    domain: `${modifiedCompanyNameForSubDomain}.${process.env.BASE_DOMAIN}`
-                },
-            })
-        }
     } catch(error){
         console.log(error);
 

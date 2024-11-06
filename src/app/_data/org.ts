@@ -113,3 +113,45 @@ export const getOrg = async() => {
         return null;
     }
 }
+
+//Unauthed route for middleware
+export const isDomainRegisteredWithValidToken = async(domain: string, token: string) => {
+
+    const getOrgFromToken = await prisma.surveyData.findUnique({
+        where: {
+            token: token
+        },
+        select: {
+            tenantId: true
+        }
+    })
+
+    if (!getOrgFromToken){
+        throw new Error("Not a valid token. prisma response was null")
+    }
+
+    const foundOrgDomain = await prisma.org.findFirst({
+        where: {
+            AND: [
+                {id: getOrgFromToken.tenantId},
+                {domain: domain}
+            ]
+        },
+        select: {
+            id: true,
+            domain: true,
+            domainVerified: true
+        }
+    })
+
+    if (!foundOrgDomain){
+        throw new Error("domain is not valid. prisma repsonse was null")
+    }
+
+    if(!foundOrgDomain.domainVerified){
+        throw new Error("Domain is not verified")
+    }
+
+    return foundOrgDomain.domainVerified
+
+}

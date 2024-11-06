@@ -5,7 +5,7 @@ import {
     Head,
     Html,
     Img,
-    Link,
+    //Link,
     Preview,
     Section,
     Text,
@@ -52,10 +52,7 @@ import {
               </Text>
               <Text style={text}>
                 To keep your account secure, please do <b>NOT</b> forward this email
-                to anyone. See our Help Center for{" "}
-                <Link style={anchor} href="https://dropbox.com">
-                  more security tips.
-                </Link>
+                to anyone.
               </Text>
               <Text style={text}>Go make some happy clients!</Text>
             </Section>
@@ -103,8 +100,4 @@ import {
     display: "block",
     width: "210px",
     padding: "14px 7px",
-  };
-  
-  const anchor = {
-    textDecoration: "underline",
   };

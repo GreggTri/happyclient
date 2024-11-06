@@ -6,6 +6,7 @@ import 'server-only';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/app/_lib/session';
+import { isDomainRegisteredWithValidToken } from './app/_data/org';
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -15,46 +16,34 @@ export default async function middleware(req: NextRequest) {
   const baseDomain = isDev ? 'localhost:3000' : process.env.BASE_DOMAIN; // Adjust base domain
   const isCustomDomain = hostname !== baseDomain && hostname !== `www.${baseDomain}`;
 
-  // Check if hostname is valid and contains at least one dot
-  if (hostname && hostname.includes('.')) {
-    // Handle custom domain and subdomain logic
-    let subdomain, customDomain;
+  // Check if hostname is valid
+  if (isCustomDomain) {
 
-    const hostnameParts = hostname.split('.');
+    // Extract the token from the path instead of using a query parameter
+    const urlPath = req.nextUrl.pathname;
+    const token = urlPath.substring(1); // Removes the leading '/' from the path
+    const domain = hostname // this is to make some name as routing
 
-    // Ignore 'www' as a subdomain
-    if (hostnameParts[0] === 'www') {
-      hostnameParts.shift(); // Remove 'www' from the parts array
+    if(token === null){
+      return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
+    }
+    if(domain === null){
+      return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
     }
 
-    // Determine if it's a custom domain with a subdomain
-    if (hostnameParts.length > 2) {
-      // If there are more than two parts, assume the first is a subdomain
-      subdomain = hostnameParts[0];
-      customDomain = hostnameParts.slice(1).join('.');
+    // Check if the custom domain is registered
+    const domainRegisteredAndValidToken = await isDomainRegisteredWithValidToken(domain, token);
+
+    if (domainRegisteredAndValidToken) {
+
+      // Rewrite the request to the desired internal path
+      const rewriteUrl = new URL(`/${domain}/${token}`, req.url);
+
+      return NextResponse.rewrite(rewriteUrl);
+      
     } else {
-      // If there are only two parts, treat this as a custom domain without a subdomain
-      customDomain = hostname;
-    }
-
-    // Handle custom domain-specific logic
-    if (isCustomDomain || customDomain) {
-      const customer = await getSurveyDataByToken(token); // Fetch customer data by custom domain
-
-      if (!customer) {
-        return NextResponse.redirect(new URL('/404', req.nextUrl), { status: 404 });
-      }
-
-      // Optionally: Handle subdomain-specific logic if applicable
-      if (subdomain && subdomain !== 'www') {
-        const subdomainCustomer = await getSurveyDataByToken(token);
-
-        if (!subdomainCustomer) {
-          return NextResponse.redirect(new URL('/404', req.nextUrl), { status: 404 });
-        }
-      }
-
-      // Proceed with custom domain or subdomain-based logic
+      // If the domain is not registered, redirect to an error page
+      return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
     }
   }
 

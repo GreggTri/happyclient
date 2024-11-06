@@ -82,7 +82,7 @@ export async function GET(request: NextRequest){
                         from:`${org.companyName} <${org.surveyEmail}>`,
                         to: [`${client.email}`],
                         subject: `${org.companyName} would like you to fill out their survey!`,
-                        react: FormLinkTemplate({ firstName: 'John' }),
+                        react: FormLinkTemplate({ userFirstname: 'John' }),
                     });
 
                     if (error) {
