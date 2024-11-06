@@ -6,7 +6,6 @@ import 'server-only';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/app/_lib/session';
-import { isDomainRegisteredWithValidToken } from './app/_data/org';
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -31,20 +30,10 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
     }
 
-    // Check if the custom domain is registered
-    const domainRegisteredAndValidToken = await isDomainRegisteredWithValidToken(domain, token);
-
-    if (domainRegisteredAndValidToken) {
-
       // Rewrite the request to the desired internal path
       const rewriteUrl = new URL(`/${domain}/${token}`, req.url);
 
       return NextResponse.rewrite(rewriteUrl);
-      
-    } else {
-      // If the domain is not registered, redirect to an error page
-      return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
-    }
   }
 
   // Decrypt the session from the cookie
