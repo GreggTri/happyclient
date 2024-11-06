@@ -3,7 +3,7 @@
 
 import { getSurveyContentFromToken } from "@/app/_data/survey";
 import FormSubmitComponent from "./FormSubmitComponent";
-import { ElementsType } from "../dashboard/forms/_formComponents/FormElements";
+import { ElementsType } from "../../dashboard/forms/_formComponents/FormElements";
 
 interface SurveyPageProps {
   params: { token: string };

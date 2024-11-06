@@ -10,9 +10,8 @@ import { decrypt } from '@/app/_lib/session';
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const hostname = req.headers.get('host'); // Get the request hostname (domain)
-  const isDev = process.env.NODE_ENV === 'development'; // Determine if in development mode
 
-  const baseDomain = isDev ? 'localhost:3000' : process.env.BASE_DOMAIN; // Adjust base domain
+  const baseDomain = process.env.BASE_DOMAIN;
   const isCustomDomain = hostname !== baseDomain && hostname !== `www.${baseDomain}`;
 
   // Check if hostname is valid
@@ -65,5 +64,5 @@ export default async function middleware(req: NextRequest) {
 
 // Apply middleware to specific routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/settings/:path*', '/login'], // Routes that require authorization
+  matcher: ['/dashboard/:path*', '/settings/:path*', '/login', '/:token([a-f0-9]{32})',], // Routes that require authorization
 };
