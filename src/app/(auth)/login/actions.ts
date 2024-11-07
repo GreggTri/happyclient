@@ -9,11 +9,12 @@ import { redirect } from 'next/navigation';
 
 export async function loginUser(state: AuthFormState, formData: FormData){
     // validate fields 
-
     const validationResult = LoginFormSchema.safeParse({
         email: formData.get('email'),
         password: formData.get('password')
     })
+
+    console.log("I made it here");
 
     if (!validationResult.success) {
         return {
@@ -24,6 +25,7 @@ export async function loginUser(state: AuthFormState, formData: FormData){
     const { email, password } = validationResult.data
 
     try{
+        console.log("I made it here now!");
         await prisma.$connect()
 
         const checkUser = await prisma.user.findUnique({
