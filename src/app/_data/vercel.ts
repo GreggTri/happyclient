@@ -8,6 +8,8 @@ const VERCEL_API_URL = 'https://api.vercel.com';
 const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
 const VERCEL_TOKEN = process.env.VERCEL_HP_API_KEY;
 
+const gitBranch = process.env.ENVIRONMENT === "prod" ? "prod" : "development"
+
 interface Error {
   message: string;
 }
@@ -39,7 +41,7 @@ export async function addDomainToVercel(domain: string) {
       Authorization: `Bearer ${VERCEL_TOKEN}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name: domain }),
+    body: JSON.stringify({ name: domain, gitBranch: gitBranch }),
   });
 
   const data = await response.json() as VercelDomainResponse;
