@@ -34,6 +34,7 @@ interface VercelDomainResponse {
   error: Error
 }
 
+
 export async function addDomainToVercel(domain: string) {
   const response = await fetch(`${VERCEL_API_URL}/v10/projects/${VERCEL_PROJECT_ID}/domains`, {
     method: 'POST',
