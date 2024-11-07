@@ -14,8 +14,6 @@ export async function loginUser(state: AuthFormState, formData: FormData){
         password: formData.get('password')
     })
 
-    console.log("I made it here");
-
     if (!validationResult.success) {
         return {
             errors: validationResult.error.flatten().fieldErrors
@@ -27,6 +25,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
     try{
         console.log("I made it here now!");
         await prisma.$connect()
+
+        console.log("is prisma connected " + prisma);
 
         const checkUser = await prisma.user.findUnique({
             where: {
@@ -51,6 +51,7 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
          // If the password does not match, return early
         if (!passwordMatch) {
+            console.log("do passwords not match?");
             return { message: 'Invalid login credentials.' };
         }
         

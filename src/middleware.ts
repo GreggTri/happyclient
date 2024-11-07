@@ -12,8 +12,7 @@ export default async function middleware(req: NextRequest) {
   const hostname = req.headers.get('host'); // Get the request hostname (domain)
 
   const baseDomain = process.env.BASE_DOMAIN;
-  console.log("this is base domain " + baseDomain);
-  console.log("this is host " + hostname);
+  
   const isCustomDomain = hostname !== baseDomain && hostname !== `www.${baseDomain}`;
 
   // Check if hostname is valid
