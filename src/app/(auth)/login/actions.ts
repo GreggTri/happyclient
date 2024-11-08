@@ -24,6 +24,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
     try{
 
+
+        console.log("IM HERE");
         const checkUser = await prisma.user.findUnique({
             where: {
                 email: email
@@ -33,6 +35,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
                 password: true,
             }
         })
+
+        console.log("IM HERE X2");
 
         // If user is not found, return early
         if (!checkUser) {
