@@ -40,18 +40,22 @@ export async function loginUser(state: AuthFormState, formData: FormData){
         }
         
 
+        console.log(checkUser);
         const passwordMatch = await bcrypt.compare(
             password,
             checkUser.password,
         );
 
-         // If the password does not match, return early
+
+        console.log(passwordMatch);
+
+        // If the password does not match, return early
         if (!passwordMatch) {
             console.log("do passwords not match?");
             return { message: 'Invalid login credentials.' };
         }
 
-        console.log("here");
+        
         
         const authenticatedUser = await prisma.user.findUnique({
             where: {
