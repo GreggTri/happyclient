@@ -36,18 +36,20 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
         // If user is not found, return early
         if (!checkUser) {
+
+            console.log("I HAVE HIT NULL CHECK USER");
             return { message: 'Invalid login credentials.' };
         }
         
 
-        console.log(checkUser);
+        console.log("this is checked user" + checkUser);
         const passwordMatch = await bcrypt.compare(
             password,
             checkUser.password,
         );
 
 
-        console.log(passwordMatch);
+        console.log("DO PASSWORDS MATCH?!" + passwordMatch);
 
         // If the password does not match, return early
         if (!passwordMatch) {
