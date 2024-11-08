@@ -74,5 +74,5 @@ export default async function middleware(req: NextRequest) {
 
 // Apply middleware to specific routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/settings/:path*', '/login', '/:token([a-f0-9]{32})',], // Routes that require authorization
+  matcher: ['/dashboard/:path*', '/settings/:path*', '/login', '/:token([a-f0-9]{32})', '/no-token'], // Routes that require authorization
 };

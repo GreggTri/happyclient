@@ -25,7 +25,6 @@ export async function registerUser(state: AuthFormState, formData: FormData){
     const { email, password } = validationResult.data
 
     try {
-        await prisma.$connect()
 
         const existingUser = await prisma.user.findUnique({
             where: {
@@ -54,8 +53,6 @@ export async function registerUser(state: AuthFormState, formData: FormData){
             }
 
         })
-
-        await prisma.$disconnect()
         
         //we add these too the session because we have viewing priveleges of certain routes via admin 
         //and we must contain/filter all queries via the tenantId

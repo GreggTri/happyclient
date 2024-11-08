@@ -24,9 +24,6 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
     try{
 
-
-        await prisma.$connect()
-
         const checkUser = await prisma.user.findUnique({
             where: {
                 email: email
@@ -81,8 +78,6 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
         console.log(org);
 
-        await prisma.$disconnect()
-
         await createSession(authenticatedUser!.id, authenticatedUser!.isAdmin, authenticatedUser!.tenantId, org!.stripeSubscriptionId );
 
        
@@ -93,7 +88,9 @@ export async function loginUser(state: AuthFormState, formData: FormData){
         }
     }
     
-    redirect('/dashboard');
+    return redirect('/dashboard');
+
+    
 }
 
 

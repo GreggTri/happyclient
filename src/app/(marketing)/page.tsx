@@ -21,7 +21,7 @@ export default async function Home() {
   if (!result) {
     console.log("I made it");
     // Redirect if the domain is not authorized
-    redirect('/login');
+    redirect('/no-token');
   }
 
   return (

@@ -13,7 +13,6 @@ export const fetchUser = cache(async () => {
     if (!session) return null;
 
     try {
-        await prisma.$connect()
 
         const user = await prisma.user.findUnique({
             where: {
@@ -31,7 +30,7 @@ export const fetchUser = cache(async () => {
                 isAdmin: true
             }
         })
-        await prisma.$disconnect()
+
 
         return {
             success: true,
@@ -78,7 +77,6 @@ export const fetchUsers = cache(async (q: string, page: number) => {
     const ITEM_PER_PAGE = 10;
 
     try {
-        await prisma.$connect()
 
         const count = await prisma.user.count({
             where: {
@@ -134,8 +132,6 @@ export const fetchUsers = cache(async (q: string, page: number) => {
             take: ITEM_PER_PAGE,
             skip: ITEM_PER_PAGE * (page - 1)
         })
-
-        await prisma.$disconnect()
 
         return {success: true, count, users};
 
