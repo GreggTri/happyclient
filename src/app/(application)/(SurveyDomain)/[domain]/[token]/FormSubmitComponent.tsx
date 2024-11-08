@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useRef, useState, useTransition } from 'react'
-import { FormElementInstance, FormElements } from '../../dashboard/forms/_formComponents/FormElements'
+import { FormElementInstance, FormElements } from '../../../dashboard/forms/_formComponents/FormElements'
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { Icons } from '@/app/_components/icons';

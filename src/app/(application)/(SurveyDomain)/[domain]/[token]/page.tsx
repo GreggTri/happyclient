@@ -3,7 +3,7 @@
 
 import { getSurveyContentFromToken } from "@/app/_data/survey";
 import FormSubmitComponent from "./FormSubmitComponent";
-import { ElementsType } from "../../dashboard/forms/_formComponents/FormElements";
+import { ElementsType } from "../../../dashboard/forms/_formComponents/FormElements";
 
 interface SurveyPageProps {
   params: { token: string };
@@ -11,8 +11,8 @@ interface SurveyPageProps {
 
 export default async function SurveyPage({ params }: SurveyPageProps) {
   const token = params.token;
-
-  if(!token) return 
+  console.log(token);
+  if(!token) return <div>Could not load your survey!</div>;
 
   const surveyContent = await getSurveyContentFromToken(token);
 

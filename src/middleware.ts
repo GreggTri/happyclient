@@ -30,10 +30,19 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(`${req.nextUrl.protocol}//${baseDomain}/domain/error`);
     }
 
+    const tokenRegex = /^[a-f0-9]{32}$/;
+
+    if (tokenRegex.test(urlPath)) {
       // Rewrite the request to the desired internal path
       const rewriteUrl = new URL(`/${domain}/${token}`, req.url);
 
       return NextResponse.rewrite(rewriteUrl);
+    } else {
+      const rewriteUrl = new URL(`/${domain}/error`, req.url);
+
+      return NextResponse.rewrite(rewriteUrl);
+    }
+
   }
 
   // Decrypt the session from the cookie

@@ -1,11 +1,28 @@
+'use server'
+
 import NavBar from "@/app/_components/navbar";
 import mouseIcon from '/public/assets/whiteMouse.svg';
 import Image from "next/image";
-import { Icons } from "./_components/icons";
+import { Icons } from "../_components/icons";
 import Link from "next/link";
+import { isBaseDomain } from "../_lib/CheckDomain";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import ContactUsForm from "./ContactUsForm";
 
 
-export default function Home() {
+export default async function Home() {
+  const host = headers().get('host');
+  
+  console.log(host);
+
+  const result = await isBaseDomain(host)
+  
+  if (!result) {
+    console.log("I made it");
+    // Redirect if the domain is not authorized
+    redirect('/login');
+  }
 
   return (
     <div className="flex flex-col ">
@@ -186,74 +203,10 @@ export default function Home() {
               <p>You can reach out directly via our email as well: <br /> <b className="text-primary">team@gethappyclient.com</b></p>
             </div>
 
-            <div className="w-full lg:w-1/2">
-              <form className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="sr-only">Name</label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Name"
-                    className="w-full p-3 border border-WHITE bg-background text-text rounded-md focus:outline-none focus:border-primary"
-                  />
-                </div>
+            <ContactUsForm/>
 
-                <div>
-                  <label htmlFor="email" className="sr-only">Email</label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Email"
-                    className="w-full p-3 border border-WHITE bg-background text-text rounded-md focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="sr-only">Company Name</label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    placeholder="Company"
-                    className="w-full p-3 border border-WHITE bg-background text-text rounded-md focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="sr-only">Subject</label>
-                  <input
-                    id="subject"
-                    name="subject"
-                    type="text"
-                    placeholder="Subject"
-                    className="w-full p-3 border border-WHITE bg-background text-text rounded-md focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="sr-only">Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    placeholder="Message"
-                    rows={4}
-                    className="w-full p-3 border border-WHITE bg-background text-text rounded-md focus:outline-none focus:border-primary"
-                  ></textarea>
-                </div>
-
-                <div className="text-right">
-                  <button type="submit" className="px-6 py-3 bg-primary text-background font-bold rounded-md hover:bg-opacity-90 focus:outline-none">
-                    Send Message
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         </section>
-
-
       </div>
     </div>
   );

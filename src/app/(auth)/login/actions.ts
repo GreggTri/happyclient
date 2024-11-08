@@ -23,10 +23,9 @@ export async function loginUser(state: AuthFormState, formData: FormData){
     const { email, password } = validationResult.data
 
     try{
-        console.log("I made it here now!");
-        await prisma.$connect()
 
-        console.log("is prisma connected " + prisma);
+
+        await prisma.$connect()
 
         const checkUser = await prisma.user.findUnique({
             where: {
@@ -67,6 +66,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
                 tenantId: true,
             }
         });
+
+        console.log(authenticatedUser);
         
         // Then, if you need the org data, make a second query for the organization
         const org = await prisma.org.findUnique({
@@ -77,6 +78,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
                 stripeSubscriptionId: true
             }
         });
+
+        console.log(org);
 
         await prisma.$disconnect()
 
