@@ -50,6 +50,8 @@ export async function loginUser(state: AuthFormState, formData: FormData){
             console.log("do passwords not match?");
             return { message: 'Invalid login credentials.' };
         }
+
+        console.log("here");
         
         const authenticatedUser = await prisma.user.findUnique({
             where: {
