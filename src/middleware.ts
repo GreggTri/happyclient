@@ -56,7 +56,7 @@ export default async function middleware(req: NextRequest) {
 
   // Check if the session does not exist and it's the login path
   if (!session && path.startsWith('/login')) {
-    return null;
+    return NextResponse.next();
   }
 
   // Redirect to login if session is not present

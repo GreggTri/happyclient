@@ -7,6 +7,11 @@ import { createSession, deleteSession } from '@/app/_lib/session'
 import { prisma } from "@/utils/prisma";
 import { redirect } from 'next/navigation';
 
+type PartialUser = {
+    id: string;
+    password: string;
+  };
+
 export async function loginUser(state: AuthFormState, formData: FormData){
     // validate fields 
     const validationResult = LoginFormSchema.safeParse({
@@ -26,15 +31,15 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
 
         console.log("IM HERE");
-        const checkUser = await prisma.user.findUnique({
-            where: {
-                email: email
-            },
-            select: {
-                id: true,
-                password: true,
-            }
-        })
+        const checkUser: PartialUser | null = await Promise.race([
+            prisma.user.findUnique({
+              where: { email },
+              select: { id: true, password: true },
+            }),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Database query timed out")), 5000) // 5 seconds timeout
+            ),
+          ]) as PartialUser | null;
 
         console.log("IM HERE X2");
 
@@ -94,6 +99,7 @@ export async function loginUser(state: AuthFormState, formData: FormData){
 
        
     } catch(error){
+        console.log("AN ERROR HAPPENED");
         console.log(error);
         return {
             message: "Something went wrong when trying to login!"
