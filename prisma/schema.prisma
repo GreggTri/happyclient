@@ -115,20 +115,19 @@ enum State {
 
 type Fields {
   id                String
-  fieldQuestion     String
+  fieldQuestion     String?
   fieldType         String //TODO:: will be enum for Layout field or Survey Field. surveyFields hold questions.
   placeholder       String?
   helperText        String?
-  options           Option[] // Optional; only needed for radio, checkbox, or select fields
-  required          Boolean  @default(false)
-  sentimentAnalysis Boolean  @default(false)
+  options           String[] // Optional; only needed for radio, checkbox, or select fields
+  required          Boolean?
+  sentimentAnalysis Boolean?
   rows              Int?
+  height            Int?
   position          Int
 }
 
-type Option {
-  value String // The actual value to be submitted
-}
+
 
 model SurveyData {
   id                String          @id @default(auto()) @map("_id") @db.ObjectId

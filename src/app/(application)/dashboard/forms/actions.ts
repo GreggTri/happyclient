@@ -38,12 +38,14 @@ type Field = {
   id: string;
   type: string; // Corresponds to the fieldType in the schema (e.g., 'TextField', 'Checkbox')
   extraAttributes: {
-    label: string;
-    placeholder: string;
-    helperText: string;
-    required: boolean;
-    sentimentAnalysis: boolean;
-    rows: number;
+    label: string | undefined;
+    placeholder: string | undefined;
+    helperText: string | undefined;
+    required: boolean | undefined;
+    sentimentAnalysis: boolean | undefined;
+    rows: number | undefined;
+    height: number | undefined;
+    options: string[]
   };
 };
 
@@ -55,28 +57,52 @@ export async function saveSurvey(id: string, jsonContent: string) {
   // Parse the JSON content to convert it into an object
   const data = JSON.parse(jsonContent);
   
-  return await prisma.survey.update({
-    where: {
-      id: id,
-      tenantId: String(session.tenantId)
-    },
-    data: {
-      fields: {
-        set: data.map((field: Field, index: number) => ({
-          id: field.id,
-          fieldQuestion: field.extraAttributes.label,
-          fieldType: field.type,
-          placeholder: field.extraAttributes.placeholder,
-          helperText: field.extraAttributes.helperText,
-          options: [], // You can map options here if needed
-          required: field.extraAttributes.required,
-          sentimentAnalysis: field.extraAttributes.sentimentAnalysis,
-          rows: field.extraAttributes.rows,
-          position: index
-        }))
+  console.log(data);
+
+  return await prisma.$transaction(async (prisma) => {
+
+    // Clear existing fields first
+    await prisma.survey.update({
+      where: {
+        id: id,
+        tenantId: String(session.tenantId),
+      },
+      data: {
+        fields: {
+          set: [], // Clear all fields
+        },
+      },
+    });
+
+    const updatedSurvey = await prisma.survey.update({
+      where: {
+        id: id,
+        tenantId: String(session.tenantId)
+      },
+      data: {
+        fields: {
+          set: data.map((field: Field, index: number) => ({
+            id: field.id,
+            fieldQuestion: field.extraAttributes?.label ?? undefined,
+            fieldType: field.type,
+            placeholder: field.extraAttributes?.placeholder ?? undefined,
+            helperText: field.extraAttributes?.helperText ?? undefined,
+            options: field.extraAttributes?.options ?? undefined, // this is for select or future checkbox button. multi-select type questions.
+            required: field.extraAttributes?.required ?? undefined,
+            sentimentAnalysis: field.extraAttributes?.sentimentAnalysis ?? undefined,
+            rows: field.extraAttributes?.rows ?? undefined,
+            height: field.extraAttributes?.height ?? undefined,
+            position: index
+          }))
+        }
       }
-    }
-  });
+    });
+
+    return updatedSurvey
+
+  })
+  
+  
   
 }
 

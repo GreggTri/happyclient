@@ -22,7 +22,7 @@ import useDesigner from "../hooks/UseDesigner";
 const type: ElementsType = "SubtitleField";
 
 const extraAttributes = {
-  title: "Subtitle field",
+  label: "Subtitle field",
 }
 
 export const SubtitleFieldFormElement: FormElement = {
@@ -54,17 +54,17 @@ function DesignerComponent({
 }) {
 
     const element = elementInstance as CustomInstance
-    const { title } = element.extraAttributes;
+    const { label } = element.extraAttributes;
     return (
         <div className="flex flex-col gap-2 w-full">
             <Label className="text-white/50">Subtitle Field</Label>
-            <p className="text-xl">{title}</p>
+            <p className="text-xl">{label}</p>
         </div>
     );
 }
 
 const propertiesSchema = z.object({
-    title: z.string().min(2).max(150),
+  label: z.string().min(2).max(150),
 })
 
 type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
@@ -77,7 +77,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
         resolver: zodResolver(propertiesSchema),
         mode: "onBlur",
         defaultValues: {
-            title: element.extraAttributes.title
+          label: element.extraAttributes.label
         }
     })
 
@@ -88,11 +88,11 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 
     function applyChanges(values: propertiesFormSchemaType){
 
-        const { title} = values;
+        const { label} = values;
 
         updateElement(element.id, {
             ...element,
-            extraAttributes: {title}
+            extraAttributes: {label}
         })
     }
 
@@ -107,7 +107,7 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
         >
             <FormField
               control={form.control}
-              name="title"
+              name="label"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Subtitle</FormLabel>
@@ -139,9 +139,9 @@ function PropertiesComponent({elementInstance}: {elementInstance: FormElementIns
 function FormComponent({elementInstance}: {elementInstance: FormElementInstance}){
 
   const element = elementInstance as CustomInstance
-  const { title } = element.extraAttributes;
+  const { label } = element.extraAttributes;
 
   return (
-    <p className="text-xl opacity-70">{title}</p>
+    <p className="text-xl opacity-70">{label}</p>
   );
 }

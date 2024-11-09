@@ -40,7 +40,11 @@ function FormBuilder({ survey }: {survey: Survey}){
                 label: field.fieldQuestion,
                 helperText: field.helperText,
                 placeholder: field.placeholder,
-                required: field.required
+                required: field.required,
+                sentimentAnalysis: field.sentimentAnalysis,
+                rows: field.rows,
+                height: field.height,
+                options: field.options
             }
         }))
 

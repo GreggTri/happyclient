@@ -14,7 +14,7 @@ export default async function FormBuilderPage({ params }: {
     const surveyId = params.id
     const survey = await getSurvey(surveyId)
     
-    console.log(survey);
+    //console.log(survey);
 
     if(!survey){
       revalidatePath('/dashboard/forms')
