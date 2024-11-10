@@ -57,6 +57,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@react-email/render": "^1.0.2",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
